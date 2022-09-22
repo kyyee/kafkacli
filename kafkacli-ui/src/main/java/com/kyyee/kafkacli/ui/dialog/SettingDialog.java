@@ -99,7 +99,7 @@ public class SettingDialog extends JDialog {
 
         getAccentColorToolBar().add(Box.createHorizontalGlue());
 
-//        ButtonGroup group = new ButtonGroup();
+        ButtonGroup buttonGroup = new ButtonGroup();
         int selectedIndex = 0;
         for (int i = 0; i < getAccentColorButtons().length; i++) {
             String accentColorKey = accentColorKeys[i];
@@ -110,7 +110,7 @@ public class SettingDialog extends JDialog {
                 selectedIndex = i;
             }
             getAccentColorToolBar().add(getAccentColorButtons()[i]);
-//            group.add(accentColorButtons[i]);
+            buttonGroup.add(getAccentColorButtons()[i]);
         }
 
         getAccentColorButtons()[selectedIndex].setSelected(true);
