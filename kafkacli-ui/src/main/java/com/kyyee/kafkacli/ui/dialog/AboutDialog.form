@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.kyyee.kafkacli.ui.dialog.AboutDialog">
+  <grid id="cbd77" binding="contentPane" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="10" left="10" bottom="10" right="10"/>
+    <constraints>
+      <xy x="48" y="54" width="891" height="976"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <grid id="94766" layout-manager="GridLayoutManager" row-count="1" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <hspacer id="98af6">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </hspacer>
+          <grid id="9538f" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="e7465" class="javax.swing.JButton" binding="buttonOK">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value="确定"/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+          <hspacer id="13ada">
+            <constraints>
+              <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+            </constraints>
+          </hspacer>
+        </children>
+      </grid>
+      <grid id="e3588" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <scrollpane id="ac6fc" binding="contentScrollPane">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <grid id="85b2d" layout-manager="GridLayoutManager" row-count="6" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="40" left="40" bottom="40" right="40"/>
+                <constraints/>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="2bff" class="javax.swing.JLabel" binding="logoLabel">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <icon value="icons/favicon.png"/>
+                      <labelFor value="ac6fc"/>
+                      <text value=""/>
+                    </properties>
+                  </component>
+                  <grid id="20775" layout-manager="GridLayoutManager" row-count="3" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="0" right="0"/>
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none" title="KafkaCli">
+                      <font size="20" style="1"/>
+                      <title-color color="-11575902"/>
+                    </border>
+                    <children>
+                      <component id="709" class="javax.swing.JLabel">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="kafka desktop client for developers"/>
+                        </properties>
+                      </component>
+                      <component id="c5058" class="javax.swing.JLabel" binding="authorLabel">
+                        <constraints>
+                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="&lt;html&gt;Proudly by &lt;a href=&quot;https://github.com/kyyee&quot;&gt;Kyyee&lt;/a&gt;&lt;/html&gt;"/>
+                          <toolTipText value="https://github.com/kyyee"/>
+                        </properties>
+                      </component>
+                      <component id="40427" class="javax.swing.JLabel" binding="versionLabel">
+                        <constraints>
+                          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="v1.0.0"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
+                  <grid id="43130" layout-manager="GridLayoutManager" row-count="5" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="0" right="0"/>
+                    <constraints>
+                      <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none" title="About">
+                      <font style="1"/>
+                    </border>
+                    <children>
+                      <component id="bf7cb" class="javax.swing.JLabel" binding="codeGitHubLabel">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="&lt;html&gt;Hi. Thanks to use &lt;a href=&quot;https://github.com/kyyee/kafkacli&quot;&gt;KafkaCli&lt;/a&gt;.&lt;/html&gt;"/>
+                          <toolTipText value="https://github.com/kyyee/kafkacli"/>
+                        </properties>
+                      </component>
+                      <component id="d1e57" class="javax.swing.JLabel">
+                        <constraints>
+                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="low-level programmer use Swing building projects, but I still love to develop by it."/>
+                        </properties>
+                      </component>
+                      <component id="cce82" class="javax.swing.JLabel">
+                        <constraints>
+                          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="So every little free time, I had went towards the development."/>
+                        </properties>
+                      </component>
+                      <component id="2f451" class="javax.swing.JLabel">
+                        <constraints>
+                          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="I did some works finaly, although there are so many same on web page."/>
+                        </properties>
+                      </component>
+                      <component id="ae37e" class="javax.swing.JLabel">
+                        <constraints>
+                          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="Hope you enjoy using it as much as I did building it."/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
+                  <grid id="13f8d" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="0" right="0"/>
+                    <constraints>
+                      <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none" title="ISSUE">
+                      <font style="1"/>
+                    </border>
+                    <children>
+                      <component id="bb44f" class="javax.swing.JLabel" binding="issueLabel">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="&lt;html&gt;&lt;a href=&quot;https://github.com/kyyee/kafkacli/issues&quot;&gt;https://github.com/kyyee/kafkacli/issues&lt;/a&gt;&lt;/html&gt;"/>
+                          <toolTipText value="https://github.com/kyyee/kafkacli/issues"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
+                  <grid id="61edd" layout-manager="GridLayoutManager" row-count="4" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="0" right="0"/>
+                    <constraints>
+                      <grid row="4" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none" title="Thanks">
+                      <font style="1"/>
+                    </border>
+                    <children>
+                      <component id="cbe57" class="javax.swing.JLabel" binding="flatLafLabel">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="&lt;html&gt;&lt;a href=&quot;https://github.com/JFormDesigner/FlatLaf&quot;&gt;FlatLaf&lt;/a&gt;&lt;/html&gt;"/>
+                          <toolTipText value="https://github.com/JFormDesigner/FlatLaf"/>
+                        </properties>
+                      </component>
+                      <component id="9327d" class="javax.swing.JLabel" binding="darculaLabel">
+                        <constraints>
+                          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="&lt;html&gt;&lt;a href=&quot;https://github.com/bulenkov/Darcula&quot;&gt;Darcula&lt;/a&gt;&lt;/html&gt;"/>
+                          <toolTipText value="https://github.com/bulenkov/Darcula"/>
+                        </properties>
+                      </component>
+                      <component id="a50cb" class="javax.swing.JLabel" binding="springLabel">
+                        <constraints>
+                          <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="&lt;html&gt;&lt;a href=&quot;https://spring.io/&quot;&gt;Spring&lt;/a&gt;&lt;/html&gt;"/>
+                          <toolTipText value="https://spring.io/"/>
+                        </properties>
+                      </component>
+                      <component id="bf14c" class="javax.swing.JLabel" binding="vsCodeIconsLabel">
+                        <constraints>
+                          <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="&lt;html&gt;&lt;a href=&quot;https://github.com/microsoft/vscode-icons&quot;&gt;vscode-icons&lt;/a&gt;&lt;/html&gt;"/>
+                          <toolTipText value="https://github.com/microsoft/vscode-icons"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
+                  <grid id="7c02e" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="0" right="0"/>
+                    <constraints>
+                      <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none" title="OTHER WORKS">
+                      <font style="1"/>
+                    </border>
+                    <children>
+                      <component id="f2b9b" class="javax.swing.JLabel" binding="spsLinkLabel">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="&lt;html&gt;&lt;a href=&quot;https://github.com/kyyee/springboot-project-seed&quot;&gt;springboot project seed&lt;/a&gt;&lt;/html&gt;"/>
+                          <toolTipText value="https://github.com/kyyee/springboot-project-seed"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
+                  <hspacer id="a800d">
+                    <constraints>
+                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                  </hspacer>
+                </children>
+              </grid>
+            </children>
+          </scrollpane>
+        </children>
+      </grid>
+    </children>
+  </grid>
+</form>

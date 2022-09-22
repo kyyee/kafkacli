@@ -1,0 +1,13 @@
+{
+  "currentVersion": "v1.0.0",
+  "versions": [
+    {
+      "version": "v1.0.0",
+      "title": "第一个版本",
+      "changelogs": [
+        "第一个版本",
+        "● 完成kafka客户端的一些基础功能"
+      ]
+    }
+  ]
+}
