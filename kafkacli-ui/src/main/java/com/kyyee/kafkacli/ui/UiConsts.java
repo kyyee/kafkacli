@@ -89,5 +89,4 @@ public class UiConsts {
      */
     public static final String DOWNLOAD_LINK_INFO_URL = "https://github.com/kyyee/kafkacli/download_urls.json";
 
-    public static final String FONT_SIZE_GUIDE = "fontSizeGuide";
 }

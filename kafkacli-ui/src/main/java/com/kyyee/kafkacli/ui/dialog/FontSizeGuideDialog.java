@@ -29,13 +29,13 @@ public class FontSizeGuideDialog extends JDialog {
      * 引导用户调整字号
      */
     public static void init() {
-        if (StringUtils.isEmpty(UserConfig.getInstance().getProps(UiConsts.FONT_SIZE_GUIDE))) {
+        if (!UserConfig.getInstance().getFontInit()) {
             FontSizeGuideDialog fontSizeAdjustDialog = new FontSizeGuideDialog();
             fontSizeAdjustDialog.pack();
             fontSizeAdjustDialog.setVisible(true);
         }
 
-        UserConfig.getInstance().setProps(UiConsts.FONT_SIZE_GUIDE, "true");
+        UserConfig.getInstance().setFontInit(true);
         UserConfig.getInstance().flush();
     }
 

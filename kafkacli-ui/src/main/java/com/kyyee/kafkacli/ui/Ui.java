@@ -262,7 +262,7 @@ public final class Ui {
      * 设置全局字体
      */
     public static void initGlobalFont() {
-        if (StringUtils.isEmpty(UserConfig.getInstance().getProps(UiConsts.FONT_SIZE_GUIDE))) {
+        if (!UserConfig.getInstance().getFontInit()) {
             // 根据DPI调整字号
             // 得到屏幕的分辨率dpi
             // dell 1920*1080/24寸=96
