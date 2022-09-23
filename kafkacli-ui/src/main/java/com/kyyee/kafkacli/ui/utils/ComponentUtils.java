@@ -1,7 +1,6 @@
 package com.kyyee.kafkacli.ui.utils;
 
 import com.kyyee.kafkacli.App;
-import com.kyyee.kafkacli.ui.frame.MainFrame;
 
 import java.awt.*;
 

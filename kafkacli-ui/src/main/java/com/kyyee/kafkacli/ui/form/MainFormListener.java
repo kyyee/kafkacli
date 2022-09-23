@@ -5,10 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import javax.swing.tree.TreePath;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 @Slf4j
 public class MainFormListener {
@@ -22,12 +20,7 @@ public class MainFormListener {
         clusterTreePopupMenu.add(renameGroup);
 
         JTree clusterTree = mainForm.getClusterTree();
-        clusterTree.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-
-            }
-
+        clusterTree.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 TreePath path = clusterTree.getPathForLocation(e.getX(), e.getY());
@@ -41,21 +34,6 @@ public class MainFormListener {
                     clusterTreePopupMenu.show(clusterTree, e.getX(), e.getY());
                 }
             }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
         });
 
         addNewConnectionItem.addActionListener(e -> {
@@ -67,7 +45,7 @@ public class MainFormListener {
                 log.error("create new connection dialog failed. {}", exception.getMessage());
             }
         });
-        mainForm.getCreateConnectButton().addActionListener(e -> {
+        mainForm.getButtonCreateConn().addActionListener(e -> {
             try {
                 NewConnDialog dialog = new NewConnDialog();
                 dialog.pack();

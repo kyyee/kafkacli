@@ -7,35 +7,14 @@ import com.kyyee.kafkacli.ui.form.MainForm;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 
 
 public class MainFrameListener {
 
     public static void addListeners(MainFrame mainFrame) {
-        mainFrame.addWindowListener(new WindowListener() {
-
-            @Override
-            public void windowOpened(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowIconified(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowDeiconified(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowDeactivated(WindowEvent e) {
-
-            }
-
+        mainFrame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
                 Ui.saveBeforeExit();
@@ -45,16 +24,6 @@ public class MainFrameListener {
                 } else {
                     mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 }
-            }
-
-            @Override
-            public void windowClosed(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowActivated(WindowEvent e) {
-
             }
         });
 

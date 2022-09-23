@@ -7,8 +7,10 @@ import com.kyyee.kafkacli.ui.form.MainForm;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.ConsumerGroupListing;
+import org.apache.kafka.clients.admin.PartitionReassignment;
 import org.apache.kafka.clients.admin.TopicListing;
 import org.apache.kafka.common.Node;
+import org.apache.kafka.common.TopicPartition;
 import org.slf4j.helpers.MessageFormatter;
 
 import javax.swing.*;
@@ -20,6 +22,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -43,7 +46,6 @@ public class NewConnListener {
 
         dialog.getButtonCancel().addActionListener(e -> dialog.dispose());
 
-        // 使用习惯-菜单栏位置
         dialog.getClusterVersionComboBox().addItemListener(e -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 log.info("select cluster version:{}", e.getItem());
@@ -102,7 +104,7 @@ public class NewConnListener {
         while (root.children().hasMoreElements()) {
             String nodeName = root.children().nextElement().toString();
             if (nodeName.equals(clusterName)) {
-                JOptionPane.showMessageDialog(dialog, root.toString() + "上已存在同名节点！\n\n", "新建连接失败", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(dialog, root + "上已存在同名节点！\n\n", "新建连接失败", JOptionPane.ERROR_MESSAGE);
                 return;
             }
         }
@@ -121,6 +123,8 @@ public class NewConnListener {
         for (TopicListing topic : topics) {
             DefaultMutableTreeNode topicTreeNode = new DefaultMutableTreeNode(topic.name());
             topicsTreeNode.add(topicTreeNode);
+            Map<TopicPartition, PartitionReassignment> partition = adminClient.listPartitionReassignments().reassignments().get(5, TimeUnit.SECONDS);
+
         }
         clientTreeNode.add(topicsTreeNode);
 

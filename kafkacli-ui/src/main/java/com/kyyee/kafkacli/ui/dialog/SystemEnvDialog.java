@@ -6,11 +6,9 @@ import com.intellij.uiDesigner.core.Spacer;
 import com.kyyee.kafkacli.App;
 import com.kyyee.kafkacli.ui.utils.ComponentUtils;
 import lombok.Getter;
-import org.apache.commons.io.FileUtils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.List;
 
 @Getter

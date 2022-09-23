@@ -12,7 +12,6 @@ import com.intellij.uiDesigner.core.Spacer;
 import com.kyyee.kafkacli.App;
 import com.kyyee.kafkacli.common.utils.JSON;
 import com.kyyee.kafkacli.ui.UiConsts;
-import com.kyyee.kafkacli.ui.frame.MainFrame;
 import com.kyyee.kafkacli.ui.utils.ComponentUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
