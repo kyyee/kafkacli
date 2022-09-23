@@ -1,6 +1,6 @@
 package com.kyyee.kafkacli.ui.component;
 
-import com.formdev.flatlaf.*;
+import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.extras.FlatAnimatedLafChange;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.kyyee.framework.common.exception.BaseErrorCode;
@@ -124,27 +124,27 @@ public class TopMenuBar extends JMenuBar {
         JCheckBoxMenuItem defaultMaxWindowMenuItem = new JCheckBoxMenuItem("默认最大化窗口");
         defaultMaxWindowMenuItem.setSelected(UserConfig.getInstance().isDefaultMaxWindow());
         defaultMaxWindowMenuItem.addActionListener(e -> {
-            boolean selected = defaultMaxWindowMenuItem.isSelected();
-            if (selected) {
+            boolean defaultMaxWindow = defaultMaxWindowMenuItem.isSelected();
+            if (defaultMaxWindow) {
                 App.mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
             } else {
                 App.mainFrame.setExtendedState(JFrame.NORMAL);
             }
-            UserConfig.getInstance().setDefaultMaxWindow(selected);
+            UserConfig.getInstance().setDefaultMaxWindow(defaultMaxWindow);
             UserConfig.getInstance().flush();
         });
         appearanceMenu.add(defaultMaxWindowMenuItem);
 
-        JCheckBoxMenuItem unifiedBackgroundItem = new JCheckBoxMenuItem("窗口颜色沉浸式");
-        unifiedBackgroundItem.setSelected(UserConfig.getInstance().isUnifiedBackground());
-        unifiedBackgroundItem.addActionListener(e -> {
-            boolean selected = unifiedBackgroundItem.isSelected();
-            UserConfig.getInstance().setUnifiedBackground(selected);
+        JCheckBoxMenuItem unifiedBackgroundMenuItem = new JCheckBoxMenuItem("窗口颜色沉浸式");
+        unifiedBackgroundMenuItem.setSelected(UserConfig.getInstance().isUnifiedBackground());
+        unifiedBackgroundMenuItem.addActionListener(e -> {
+            boolean unifiedBackground = unifiedBackgroundMenuItem.isSelected();
+            UserConfig.getInstance().setUnifiedBackground(unifiedBackground);
             UserConfig.getInstance().flush();
-            UIManager.put("TitlePane.unifiedBackground", selected);
+            UIManager.put("TitlePane.unifiedBackground", unifiedBackground);
             FlatLaf.updateUI();
         });
-        appearanceMenu.add(unifiedBackgroundItem);
+        appearanceMenu.add(unifiedBackgroundMenuItem);
         appearanceMenu.addSeparator();
 
         themeMenu = new JMenu("主题风格");

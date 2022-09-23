@@ -18,12 +18,10 @@ import javax.swing.border.TitledBorder;
 import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Locale;
-import java.util.Objects;
 
 @Getter
 public class SettingDialog extends JDialog {
@@ -46,8 +44,14 @@ public class SettingDialog extends JDialog {
     private JToolBar accentColorToolBar;
 
     public final static String[] accentColorKeys = {
-        "Moo.accent.default", "Moo.accent.blue", "Moo.accent.purple", "Moo.accent.red",
-        "Moo.accent.orange", "Moo.accent.yellow", "Moo.accent.green", "Moo.accent.mooYellow"
+        "Moo.accent.default",
+        "Moo.accent.blue",
+        "Moo.accent.purple",
+        "Moo.accent.red",
+        "Moo.accent.orange",
+        "Moo.accent.yellow",
+        "Moo.accent.green",
+        "Moo.accent.mooYellow"
     };
 
     private final JToggleButton[] accentColorButtons = new JToggleButton[accentColorKeys.length];

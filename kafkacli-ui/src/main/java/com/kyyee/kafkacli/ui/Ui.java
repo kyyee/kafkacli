@@ -150,12 +150,8 @@ public final class Ui {
                 MenuItem openItem = new MenuItem("KafkaCli");
                 MenuItem exitItem = new MenuItem("Exit");
 
-                openItem.addActionListener(e -> {
-                    showMainFrame();
-                });
-                exitItem.addActionListener(e -> {
-                    shutdown();
-                });
+                openItem.addActionListener(e -> showMainFrame());
+                exitItem.addActionListener(e -> shutdown());
 
                 App.popupMenu.add(openItem);
                 App.popupMenu.addSeparator();
