@@ -195,6 +195,14 @@ public class UserConfig {
         setting.putByGroup("theme", "setting.appearance", theme);
     }
 
+    public boolean getFontInit() {
+        return setting.getBool("fontInit", "setting.appearance", false);
+    }
+
+    public void setFontInit(boolean fontInit) {
+        setting.putByGroup("fontInit", "setting.appearance", String.valueOf(fontInit));
+    }
+
     public String getFontFamily() {
         if (SystemInfo.isLinux) {
             return setting.getStr("fontName", "setting.appearance", "Noto Sans CJK HK");
@@ -208,7 +216,7 @@ public class UserConfig {
     }
 
     public int getFontSize() {
-        return setting.getInt("fontSize", "setting.appearance", 13);
+        return setting.getInt("fontSize", "setting.appearance", 12);
     }
 
     public void setFontSize(int fontSize) {
@@ -232,7 +240,7 @@ public class UserConfig {
     }
 
     public String getAccentColor() {
-        return setting.getStr("accentColor", "setting.quickNote", "");
+        return setting.getStr("accentColor", "setting.quickNote", "Moo.accent.red");
     }
 
     public void setAccentColor(String accentColor) {
