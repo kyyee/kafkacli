@@ -3,7 +3,7 @@ package com.kyyee.kafkacli.common.component.jackson.deser;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import org.springframework.util.ObjectUtils;
+import org.apache.commons.lang3.ObjectUtils;
 
 import java.io.IOException;
 import java.time.Instant;
