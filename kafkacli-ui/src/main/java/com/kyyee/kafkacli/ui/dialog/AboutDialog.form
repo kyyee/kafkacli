@@ -85,7 +85,7 @@
                     <properties/>
                     <border type="none" title="KafkaCli">
                       <font size="20" style="1"/>
-                      <title-color color="-11575902"/>
+                      <title-color color="-1096636"/>
                     </border>
                     <children>
                       <component id="709" class="javax.swing.JLabel">
