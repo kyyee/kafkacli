@@ -70,13 +70,13 @@ public class NewConnListener {
 
             try (AdminClient adminClient = new AdminClientServiceImpl().connect(bootstrapServers)) {
                 Collection<Node> nodes = adminClient
-                        .describeCluster()
-                        .nodes()
-                        .get(5, TimeUnit.SECONDS);
+                    .describeCluster()
+                    .nodes()
+                    .get(5, TimeUnit.SECONDS);
                 String nodesStr = nodes
-                        .stream()
-                        .map(node -> node.host() + ":" + node.port())
-                        .collect(Collectors.joining("\n"));
+                    .stream()
+                    .map(node -> node.host() + ":" + node.port())
+                    .collect(Collectors.joining("\n"));
                 String[] options = {"确定", "取消"};
                 int response = JOptionPane.showOptionDialog(dialog, MessageFormatter.arrayFormat("连接成功！\n\n节点数量：{}\n节点列表：\n{}", new Object[]{nodes.size(), nodesStr}).getMessage(),
                     "成功", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
@@ -128,7 +128,7 @@ public class NewConnListener {
         }
         clientTreeNode.add(topicsTreeNode);
 
-        Collection<ConsumerGroupListing> consumerGroups = adminClient.listConsumerGroups().all().get(5,TimeUnit.SECONDS);
+        Collection<ConsumerGroupListing> consumerGroups = adminClient.listConsumerGroups().all().get(5, TimeUnit.SECONDS);
         DefaultMutableTreeNode consumerGroupsTreeNode = new DefaultMutableTreeNode("consumerGroups");
         for (ConsumerGroupListing consumerGroup : consumerGroups) {
             DefaultMutableTreeNode consumerGroupTreeNode = new DefaultMutableTreeNode(consumerGroup.groupId(), false);
