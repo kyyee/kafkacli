@@ -1,11 +1,9 @@
 package com.kyyee.kafkacli.ui.dialog;
 
 import com.kyyee.kafkacli.App;
-import com.kyyee.kafkacli.ui.UiConsts;
 import com.kyyee.kafkacli.ui.configs.UserConfig;
 import com.kyyee.kafkacli.ui.utils.ComponentUtils;
 import lombok.Getter;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
 

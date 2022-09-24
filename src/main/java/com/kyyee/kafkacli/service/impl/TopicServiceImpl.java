@@ -26,14 +26,4 @@ public class TopicServiceImpl implements TopicService {
         return topicNames;
     }
 
-    public static void main(String[] args) {
-        AdminClientServiceImpl adminClientService = new AdminClientServiceImpl();
-        try (AdminClient connect = adminClientService.connect("192.168.21.247:9092")) {
-
-            TopicServiceImpl topicService = new TopicServiceImpl();
-            Set<String> list = topicService.list(connect);
-            log.info("{}", list);
-        }
-
-    }
 }
