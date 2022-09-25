@@ -13,6 +13,7 @@ import com.formdev.flatlaf.util.SystemInfo;
 import com.kyyee.framework.common.exception.BaseErrorCode;
 import com.kyyee.framework.common.exception.BaseException;
 import com.kyyee.kafkacli.App;
+import com.kyyee.kafkacli.common.component.server.SocketServer;
 import com.kyyee.kafkacli.ui.configs.UserConfig;
 import com.kyyee.kafkacli.ui.dialog.AboutDialog;
 import com.kyyee.kafkacli.ui.dialog.FontSizeGuideDialog;
@@ -20,7 +21,6 @@ import com.kyyee.kafkacli.ui.dialog.SettingDialog;
 import com.kyyee.kafkacli.ui.form.LoadingForm;
 import com.kyyee.kafkacli.ui.form.MainForm;
 import com.kyyee.kafkacli.ui.form.TopicForm;
-import com.kyyee.kafkacli.ui.frame.MainFrame;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
@@ -78,7 +78,7 @@ public final class Ui {
         FlatInspector.install("ctrl shift alt X");
         FlatUIDefaultsInspector.install("ctrl shift alt Y");
 
-        App.mainFrame = new MainFrame();
+//        App.mainFrame = new MainFrame();
         App.mainFrame.init();
         if (UserConfig.getInstance().isTray()) {
             initTray();
@@ -326,6 +326,7 @@ public final class Ui {
         saveBeforeExit();
 //        App.sqlSession.close();
         App.mainFrame.dispose();
+        SocketServer.getInstance().close();
         System.exit(0);
     }
 

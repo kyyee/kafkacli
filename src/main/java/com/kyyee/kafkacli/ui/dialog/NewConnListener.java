@@ -3,14 +3,13 @@ package com.kyyee.kafkacli.ui.dialog;
 import com.kyyee.framework.common.exception.BaseErrorCode;
 import com.kyyee.framework.common.exception.BaseException;
 import com.kyyee.kafkacli.service.impl.AdminClientServiceImpl;
+import com.kyyee.kafkacli.ui.configs.ClientCache;
 import com.kyyee.kafkacli.ui.form.MainForm;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.ConsumerGroupListing;
-import org.apache.kafka.clients.admin.PartitionReassignment;
-import org.apache.kafka.clients.admin.TopicListing;
+import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.TopicPartitionInfo;
 import org.slf4j.helpers.MessageFormatter;
 
 import javax.swing.*;
@@ -22,6 +21,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
@@ -56,7 +56,8 @@ public class NewConnListener {
 
             String bootstrapServers = dialog.getBootstrapServersTextField().getText();
 
-            try (AdminClient adminClient = new AdminClientServiceImpl().connect(bootstrapServers)) {
+            try  {
+                AdminClient adminClient = new AdminClientServiceImpl().connect(bootstrapServers);
                 buildTree(dialog, adminClient);
             } catch (Exception exception) {
                 log.info("connect kafka failed. {}", exception.getMessage());
@@ -108,6 +109,7 @@ public class NewConnListener {
                 return;
             }
         }
+        ClientCache.put(clusterName, adminClient);
         DefaultMutableTreeNode clientTreeNode = new DefaultMutableTreeNode(clusterName);
 
         Collection<Node> nodes = adminClient.describeCluster().nodes().get(5, TimeUnit.SECONDS);
@@ -119,12 +121,19 @@ public class NewConnListener {
         clientTreeNode.add(brokersTreeNode);
 
         Collection<TopicListing> topics = adminClient.listTopics().listings().get(5, TimeUnit.SECONDS);
+        Map<String, TopicDescription> topicDescriptionMap = adminClient.describeTopics(adminClient.listTopics().names().get()).allTopicNames().get(5, TimeUnit.SECONDS);
         DefaultMutableTreeNode topicsTreeNode = new DefaultMutableTreeNode("topics");
         for (TopicListing topic : topics) {
             DefaultMutableTreeNode topicTreeNode = new DefaultMutableTreeNode(topic.name());
             topicsTreeNode.add(topicTreeNode);
-            Map<TopicPartition, PartitionReassignment> partition = adminClient.listPartitionReassignments().reassignments().get(5, TimeUnit.SECONDS);
 
+            DefaultMutableTreeNode partitionsTreeNode = new DefaultMutableTreeNode("partitions");
+            List<TopicPartitionInfo> partitions = topicDescriptionMap.get(topic.name()).partitions();
+            for (TopicPartitionInfo partition : partitions) {
+                DefaultMutableTreeNode partitionTreeNode = new DefaultMutableTreeNode(partition.partition(), false);
+                partitionsTreeNode.add(partitionTreeNode);
+            }
+            topicTreeNode.add(partitionsTreeNode);
         }
         clientTreeNode.add(topicsTreeNode);
 

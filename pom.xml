@@ -13,7 +13,7 @@
   <groupId>com.kyyee.kafkacli</groupId>
   <artifactId>kafkacli</artifactId>
   <version>1.0.0</version>
-  <name>${artifactId}</name>
+  <name>${project.artifactId}</name>
   <url>https://github.com/kyyee/kafkacli</url>
   <description>kafka desktop client for developers</description>
   <packaging>jar</packaging>
@@ -57,7 +57,6 @@
       <groupId>com.intellij</groupId>
       <artifactId>forms_rt</artifactId>
       <version>7.0.3</version>
-      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -144,6 +143,7 @@
           <!-- this will bundle a full JRE -->
           <customizedJre>false</customizedJre>
           <!-- 这行不能被格式化为多行，否则会出错-->
+          <licenseFile>${project.basedir}/LICENSE</licenseFile>
           <vmArgs>--add-exports jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</vmArgs>
         </configuration>
         <executions>
@@ -156,22 +156,21 @@
             <configuration>
               <platform>windows</platform>
               <createZipball>true</createZipball>
-              <generateInstaller>true</generateInstaller>
               <administratorRequired>true</administratorRequired>
               <winConfig>
                 <generateMsi>false</generateMsi>
                 <generateMsm>false</generateMsm>
-                <headerType>console</headerType>
-                <companyName>${groupId}</companyName>
+                <headerType>gui</headerType>
+                <companyName>${project.groupId}</companyName>
                 <fileVersion>1.0.0.0</fileVersion>
-                <txtFileVersion>${version}</txtFileVersion>
+                <txtFileVersion>${project.version}</txtFileVersion>
                 <productVersion>1.0.0.0</productVersion>
-                <txtProductVersion>${version}</txtProductVersion>
-                <fileDescription>${description}</fileDescription>
+                <txtProductVersion>${project.version}</txtProductVersion>
+                <fileDescription>${project.description}</fileDescription>
                 <copyright>Copyright © 2018-2022 kyyee</copyright>
-                <productName>${name}</productName>
-                <internalName>${name}</internalName>
-                <originalFilename>${name}.exe</originalFilename>
+                <productName>${project.name}</productName>
+                <internalName>${project.name}</internalName>
+                <originalFilename>${project.name}.exe</originalFilename>
 
                 <!-- choose EXE creation tool -->
                 <exeCreationTool>launch4j</exeCreationTool>
@@ -180,9 +179,9 @@
                 <setupMode>askTheUser</setupMode>
                 <setupLanguages>
                   <english>compiler:Default.isl</english>
-                  <chinese>compiler:Languages\Chinese.isl</chinese>
-                  <german>compiler:Languages\German.isl</german>
+                  <chineseSimplified>compiler:Languages\ChineseSimplified.isl</chineseSimplified>
                   <spanish>compiler:Languages\Spanish.isl</spanish>
+                  <german>compiler:Languages\German.isl</german>
                 </setupLanguages>
                 <disableDirPage>false</disableDirPage>
                 <disableProgramGroupPage>false</disableProgramGroupPage>
@@ -195,29 +194,29 @@
             </configuration>
           </execution>
 
-<!--          <execution>-->
-<!--            <id>bundling-for-linux</id>-->
-<!--            <phase>package</phase>-->
-<!--            <goals>-->
-<!--              <goal>package</goal>-->
-<!--            </goals>-->
-<!--            <configuration>-->
-<!--              <platform>linux</platform>-->
-<!--              <createTarball>true</createTarball>-->
-<!--            </configuration>-->
-<!--          </execution>-->
+          <execution>
+            <id>bundling-for-linux</id>
+            <phase>package</phase>
+            <goals>
+              <goal>package</goal>
+            </goals>
+            <configuration>
+              <platform>linux</platform>
+              <createTarball>true</createTarball>
+            </configuration>
+          </execution>
 
-<!--          <execution>-->
-<!--            <id>bundling-for-mac</id>-->
-<!--            <phase>package</phase>-->
-<!--            <goals>-->
-<!--              <goal>package</goal>-->
-<!--            </goals>-->
-<!--            <configuration>-->
-<!--              <platform>mac</platform>-->
-<!--              <createTarball>true</createTarball>-->
-<!--            </configuration>-->
-<!--          </execution>-->
+          <execution>
+            <id>bundling-for-mac</id>
+            <phase>package</phase>
+            <goals>
+              <goal>package</goal>
+            </goals>
+            <configuration>
+              <platform>mac</platform>
+              <createTarball>true</createTarball>
+            </configuration>
+          </execution>
 
         </executions>
       </plugin>
