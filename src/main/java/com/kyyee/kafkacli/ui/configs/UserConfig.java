@@ -164,7 +164,7 @@ public class UserConfig {
     }
 
     public boolean isUnifiedBackground() {
-        return setting.getBool("unifiedBackground", "setting.normal", true);
+        return setting.getBool("unifiedBackground", "setting.normal", false);
     }
 
     public void setUnifiedBackground(boolean unifiedBackground) {
@@ -205,9 +205,9 @@ public class UserConfig {
 
     public String getFontFamily() {
         if (SystemInfo.isLinux) {
-            return setting.getStr("fontName", "setting.appearance", "Noto Sans CJK HK");
+            return setting.getStr("fontFamily", "setting.appearance", "Noto Sans CJK HK");
         } else {
-            return setting.getStr("fontName", "setting.appearance", "微软雅黑");
+            return setting.getStr("fontFamily", "setting.appearance", "微软雅黑");
         }
     }
 
