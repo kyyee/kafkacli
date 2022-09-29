@@ -101,7 +101,7 @@
                           </grid>
                         </constraints>
                         <properties>
-                          <text value="192.168.21.247"/>
+                          <text value="192.168.3.200"/>
                         </properties>
                       </component>
                       <component id="2ce54" class="javax.swing.JLabel">
@@ -149,7 +149,7 @@
                           </grid>
                         </constraints>
                         <properties>
-                          <text value="192.168.21.247:9092"/>
+                          <text value="192.168.3.200:9092"/>
                         </properties>
                       </component>
                     </children>

@@ -18,18 +18,18 @@ public class TopicForm {
     private JTabbedPane contentTabbedPane;
     private JPanel contentPanel;
     private JTextField topicNameTextField;
-    private JComboBox keyComboBox;
+    private JComboBox<String> keyComboBox;
     private JButton buttonUpdate;
-    private JComboBox valueComboBox;
+    private JComboBox<String> valueComboBox;
     private JPanel propertiesPanel;
     private JTextField totalTextField;
     private JButton buttonRefresh;
+    private JScrollPane dataScrollPanel;
     private JTable dataTable;
-    private JPanel dataPanel;
-    private JTable partitiontable;
-    private JPanel partitionPanel;
+    private JScrollPane partitionScrollPanel;
+    private JTable partitionTable;
+    private JScrollPane configScrollPanel;
     private JTable configTable;
-    private JPanel configPanel;
 
     public static TopicForm getInstance() {
         if (topicForm == null) {
@@ -127,21 +127,18 @@ public class TopicForm {
         panel5.add(buttonRefresh, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_EAST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer3 = new Spacer();
         panel5.add(spacer3, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
-        dataPanel = new JPanel();
-        dataPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        contentTabbedPane.addTab("Data", dataPanel);
+        dataScrollPanel = new JScrollPane();
+        contentTabbedPane.addTab("Data", dataScrollPanel);
         dataTable = new JTable();
-        dataPanel.add(dataTable, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 50), null, 0, false));
-        partitionPanel = new JPanel();
-        partitionPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        contentTabbedPane.addTab("Partitions", partitionPanel);
-        partitiontable = new JTable();
-        partitionPanel.add(partitiontable, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 50), null, 0, false));
-        configPanel = new JPanel();
-        configPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        contentTabbedPane.addTab("Config", configPanel);
+        dataScrollPanel.setViewportView(dataTable);
+        partitionScrollPanel = new JScrollPane();
+        contentTabbedPane.addTab("Partitions", partitionScrollPanel);
+        partitionTable = new JTable();
+        partitionScrollPanel.setViewportView(partitionTable);
+        configScrollPanel = new JScrollPane();
+        contentTabbedPane.addTab("Configs", configScrollPanel);
         configTable = new JTable();
-        configPanel.add(configTable, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 50), null, 0, false));
+        configScrollPanel.setViewportView(configTable);
     }
 
     /**
@@ -150,4 +147,5 @@ public class TopicForm {
     public JComponent $$$getRootComponent$$$() {
         return contentPanel;
     }
+
 }

@@ -83,7 +83,7 @@ public class NewConnDialog extends JDialog {
         label1.setText("cluster name");
         panel5.add(label1, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         clusterNameTextField = new JTextField();
-        clusterNameTextField.setText("192.168.21.247");
+        clusterNameTextField.setText("192.168.3.200");
         panel5.add(clusterNameTextField, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final JLabel label2 = new JLabel();
         label2.setText("cluster version     ");
@@ -103,7 +103,7 @@ public class NewConnDialog extends JDialog {
         label3.setText("bootstrap servers");
         panel6.add(label3, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         bootstrapServersTextField = new JTextField();
-        bootstrapServersTextField.setText("192.168.21.247:9092");
+        bootstrapServersTextField.setText("192.168.3.200:9092");
         panel6.add(bootstrapServersTextField, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
     }
 
@@ -113,4 +113,5 @@ public class NewConnDialog extends JDialog {
     public JComponent $$$getRootComponent$$$() {
         return contentPane;
     }
+
 }
