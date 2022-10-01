@@ -6,9 +6,11 @@ import com.kyyee.kafkacli.service.impl.AdminClientServiceImpl;
 import com.kyyee.kafkacli.ui.configs.ClientCache;
 import com.kyyee.kafkacli.ui.form.MainForm;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.admin.*;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.ConsumerGroupListing;
+import org.apache.kafka.clients.admin.TopicDescription;
+import org.apache.kafka.clients.admin.TopicListing;
 import org.apache.kafka.common.Node;
-import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.TopicPartitionInfo;
 import org.slf4j.helpers.MessageFormatter;
 
@@ -78,9 +80,8 @@ public class NewConnListener {
                     .stream()
                     .map(node -> node.host() + ":" + node.port())
                     .collect(Collectors.joining("\n"));
-                String[] options = {"确定", "取消"};
-                int response = JOptionPane.showOptionDialog(dialog, MessageFormatter.arrayFormat("连接成功！\n\n节点数量：{}\n节点列表：\n{}", new Object[]{nodes.size(), nodesStr}).getMessage(),
-                    "成功", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+                int response = JOptionPane.showConfirmDialog(dialog, MessageFormatter.arrayFormat("连接成功！\n\n节点数量：{}\n节点列表：\n{}", new Object[]{nodes.size(), nodesStr}).getMessage(),
+                    "成功", JOptionPane.OK_CANCEL_OPTION);
                 if (response == 0) {
                     log.info("按下确定按钮!");
                     buildTree(dialog, adminClient);
@@ -96,7 +97,7 @@ public class NewConnListener {
 
     private static void buildTree(NewConnDialog dialog, AdminClient adminClient) throws InterruptedException, ExecutionException, TimeoutException {
         String clusterName = dialog.getClusterNameTextField().getText();
-        String clusterVersion = Objects.requireNonNull(dialog.getClusterVersionComboBox().getSelectedItem()).toString();
+        String bootstrapServers = dialog.getBootstrapServersTextField().getText();
         MainForm mainForm = MainForm.getInstance();
         mainForm.setAdminClient(adminClient);
         DefaultTreeModel rootTreeNode = (DefaultTreeModel) mainForm.getClusterTree().getModel();
@@ -109,17 +110,31 @@ public class NewConnListener {
                 return;
             }
         }
-        ClientCache.put(clusterName, adminClient);
-        DefaultMutableTreeNode clientTreeNode = new DefaultMutableTreeNode(clusterName);
+        ClientCache.put(bootstrapServers, adminClient);
+        DefaultMutableTreeNode clientTreeNode = new DefaultMutableTreeNode(bootstrapServers);
 
-        Collection<Node> nodes = adminClient.describeCluster().nodes().get(5, TimeUnit.SECONDS);
-        DefaultMutableTreeNode brokersTreeNode = new DefaultMutableTreeNode("brokers");
-        for (Node node : nodes) {
-            DefaultMutableTreeNode brokerTreeNode = new DefaultMutableTreeNode(node.idString(), false);
-            brokersTreeNode.add(brokerTreeNode);
+        buildBrokers(adminClient, clientTreeNode);
+
+        buildTopics(adminClient, clientTreeNode);
+
+        buildConsumerGroups(adminClient, clientTreeNode);
+
+        rootTreeNode.insertNodeInto(clientTreeNode, root, root.getChildCount());
+
+        dialog.dispose();
+    }
+
+    public static void buildConsumerGroups(AdminClient adminClient, DefaultMutableTreeNode clientTreeNode) throws InterruptedException, ExecutionException, TimeoutException {
+        Collection<ConsumerGroupListing> consumerGroups = adminClient.listConsumerGroups().all().get(5, TimeUnit.SECONDS);
+        DefaultMutableTreeNode consumerGroupsTreeNode = new DefaultMutableTreeNode("consumerGroups");
+        for (ConsumerGroupListing consumerGroup : consumerGroups) {
+            DefaultMutableTreeNode consumerGroupTreeNode = new DefaultMutableTreeNode(consumerGroup.groupId(), false);
+            consumerGroupsTreeNode.add(consumerGroupTreeNode);
         }
-        clientTreeNode.add(brokersTreeNode);
+        clientTreeNode.add(consumerGroupsTreeNode);
+    }
 
+    public static void buildTopics(AdminClient adminClient, DefaultMutableTreeNode clientTreeNode) throws InterruptedException, ExecutionException, TimeoutException {
         Collection<TopicListing> topics = adminClient.listTopics().listings().get(5, TimeUnit.SECONDS);
         Map<String, TopicDescription> topicDescriptionMap = adminClient.describeTopics(adminClient.listTopics().names().get()).allTopicNames().get(5, TimeUnit.SECONDS);
         DefaultMutableTreeNode topicsTreeNode = new DefaultMutableTreeNode("topics");
@@ -136,17 +151,15 @@ public class NewConnListener {
             topicTreeNode.add(partitionsTreeNode);
         }
         clientTreeNode.add(topicsTreeNode);
+    }
 
-        Collection<ConsumerGroupListing> consumerGroups = adminClient.listConsumerGroups().all().get(5, TimeUnit.SECONDS);
-        DefaultMutableTreeNode consumerGroupsTreeNode = new DefaultMutableTreeNode("consumerGroups");
-        for (ConsumerGroupListing consumerGroup : consumerGroups) {
-            DefaultMutableTreeNode consumerGroupTreeNode = new DefaultMutableTreeNode(consumerGroup.groupId(), false);
-            consumerGroupsTreeNode.add(consumerGroupTreeNode);
+    public static void buildBrokers(AdminClient adminClient, DefaultMutableTreeNode clientTreeNode) throws InterruptedException, ExecutionException, TimeoutException {
+        Collection<Node> nodes = adminClient.describeCluster().nodes().get(5, TimeUnit.SECONDS);
+        DefaultMutableTreeNode brokersTreeNode = new DefaultMutableTreeNode("brokers");
+        for (Node node : nodes) {
+            DefaultMutableTreeNode brokerTreeNode = new DefaultMutableTreeNode(node.idString(), false);
+            brokersTreeNode.add(brokerTreeNode);
         }
-        clientTreeNode.add(consumerGroupsTreeNode);
-
-        rootTreeNode.insertNodeInto(clientTreeNode, root, root.getChildCount());
-
-        dialog.dispose();
+        clientTreeNode.add(brokersTreeNode);
     }
 }

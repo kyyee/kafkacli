@@ -7,11 +7,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ClientCache {
     public static final ConcurrentHashMap<String, AdminClient> cache = new ConcurrentHashMap<>();
 
-    public static AdminClient get(String clusterName) {
-        return cache.getOrDefault(clusterName, null);
+    public static AdminClient get(String cluster) {
+        return cache.getOrDefault(cluster, null);
     }
 
-    public static void put(String clusterName, AdminClient client) {
-        cache.putIfAbsent(clusterName, client);
+    public static void put(String cluster, AdminClient client) {
+        cache.putIfAbsent(cluster, client);
     }
 }
