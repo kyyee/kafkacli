@@ -1,27 +1,23 @@
 package com.kyyee.kafkacli.ui.form;
 
-import cn.hutool.core.lang.Snowflake;
 import com.intellij.uiDesigner.core.GridConstraints;
+import com.kyyee.framework.common.exception.BaseErrorCode;
+import com.kyyee.framework.common.exception.BaseException;
 import com.kyyee.kafkacli.ui.configs.ClientCache;
+import com.kyyee.kafkacli.ui.dialog.CreateTopicDialog;
 import com.kyyee.kafkacli.ui.dialog.NewConnDialog;
+import com.kyyee.kafkacli.ui.dialog.NewConnListener;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.Config;
-import org.apache.kafka.clients.admin.ConfigEntry;
-import org.apache.kafka.clients.admin.TopicListing;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.KafkaFuture;
+import org.apache.kafka.clients.admin.*;
+import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.PartitionInfo;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.config.ConfigResource;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
@@ -48,22 +44,33 @@ public class MainFormListener {
         JMenuItem clusterTreeRenameGroup = new JMenuItem("重命名");
         clusterTreePopupMenu.add(clusterTreeRenameGroup);
 
-        JPopupMenu brokerTreePopupMenu;
-        brokerTreePopupMenu = new JPopupMenu();
-        JMenuItem brokerRefreshMenuItem = new JMenuItem("刷新");
-        brokerTreePopupMenu.add(brokerRefreshMenuItem);
+        JPopupMenu brokersTreePopupMenu;
+        brokersTreePopupMenu = new JPopupMenu();
+        JMenuItem brokersRefreshMenuItem = new JMenuItem("刷新");
+        brokersTreePopupMenu.add(brokersRefreshMenuItem);
+
+        JPopupMenu topicsTreePopupMenu;
+        topicsTreePopupMenu = new JPopupMenu();
+        JMenuItem topicsRefreshMenuItem = new JMenuItem("刷新");
+        topicsTreePopupMenu.add(topicsRefreshMenuItem);
+        JMenuItem topicsCreateMenuItem = new JMenuItem("创建topic");
+        topicsTreePopupMenu.add(topicsCreateMenuItem);
+
 
         JPopupMenu topicTreePopupMenu;
         topicTreePopupMenu = new JPopupMenu();
-        JMenuItem topicRefreshMenuItem = new JMenuItem("刷新");
-        topicTreePopupMenu.add(topicRefreshMenuItem);
-        JMenuItem topicCreateMenuItem = new JMenuItem("创建topic");
-        topicTreePopupMenu.add(topicCreateMenuItem);
+        JMenuItem topicDeleteMenuItem = new JMenuItem("删除");
+        topicTreePopupMenu.add(topicDeleteMenuItem);
+
+        JPopupMenu consumerGroupsTreePopupMenu;
+        consumerGroupsTreePopupMenu = new JPopupMenu();
+        JMenuItem consumerGroupsRefreshMenuItem = new JMenuItem("刷新");
+        consumerGroupsTreePopupMenu.add(consumerGroupsRefreshMenuItem);
 
         JPopupMenu consumerGroupTreePopupMenu;
         consumerGroupTreePopupMenu = new JPopupMenu();
-        JMenuItem consumerGroupRefreshMenuItem = new JMenuItem("刷新");
-        consumerGroupTreePopupMenu.add(consumerGroupRefreshMenuItem);
+        JMenuItem consumerGroupDeleteMenuItem = new JMenuItem("删除");
+        consumerGroupTreePopupMenu.add(consumerGroupDeleteMenuItem);
 
 
         JTree clusterTree = mainForm.getClusterTree();
@@ -71,6 +78,9 @@ public class MainFormListener {
             @Override
             public void mousePressed(MouseEvent e) {
                 DefaultMutableTreeNode selectionNode = (DefaultMutableTreeNode) clusterTree.getLastSelectedPathComponent();
+                if (ObjectUtils.isEmpty(selectionNode)) {
+                    return;
+                }
                 Object userObject = selectionNode.getUserObject();
                 switch (selectionNode.toString()) {
                     case "cluster" -> {
@@ -80,18 +90,31 @@ public class MainFormListener {
                     }
                     case "brokers" -> {
                         if (e.getButton() == 3) {
-                            brokerTreePopupMenu.show(clusterTree, e.getX(), e.getY());
+                            brokersTreePopupMenu.show(clusterTree, e.getX(), e.getY());
                         }
                     }
                     case "topics" -> {
                         if (e.getButton() == 3) {
-                            topicTreePopupMenu.show(clusterTree, e.getX(), e.getY());
+                            topicsTreePopupMenu.show(clusterTree, e.getX(), e.getY());
                         }
                     }
                     case "consumerGroups" -> {
                         if (e.getButton() == 3) {
-                            consumerGroupTreePopupMenu.show(clusterTree, e.getX(), e.getY());
+                            consumerGroupsTreePopupMenu.show(clusterTree, e.getX(), e.getY());
                         }
+                    }
+                }
+                if (ObjectUtils.isEmpty(selectionNode.getParent())) {
+                    return;
+                }
+                if (selectionNode.getParent().toString().equals("topics")) {
+                    if (e.getButton() == 3) {
+                        topicTreePopupMenu.show(clusterTree, e.getX(), e.getY());
+                    }
+                }
+                if (selectionNode.getParent().toString().equals("consumerGroups")) {
+                    if (e.getButton() == 3) {
+                        consumerGroupTreePopupMenu.show(clusterTree, e.getX(), e.getY());
                     }
                 }
 
@@ -101,68 +124,145 @@ public class MainFormListener {
         clusterTree.addTreeSelectionListener(e -> {
             DefaultMutableTreeNode selectionNode = (DefaultMutableTreeNode) clusterTree.getLastSelectedPathComponent();
 //            if (selectionNode.isLeaf()) {
-                // 叶子节点
-                TreeNode parent = selectionNode.getParent();
-                if (!ObjectUtils.isNotEmpty(parent)) {
-                    return;
-                }
-                switch (parent.toString()) {
-                    case "brokers" -> {
-                        String clusterName = parent.getParent().toString();
-                        AdminClient adminClient = ClientCache.get(clusterName);
-                        String nodeId = selectionNode.toString();
-                        try {
-                            Collection<Node> nodes = adminClient.describeCluster().nodes().get(5, TimeUnit.SECONDS);
-                            Optional<Node> nodeOptional = nodes.stream().filter(node -> node.idString().equals(nodeId)).findFirst();
-                            if (nodeOptional.isPresent()) {
-                                BrokerForm brokerForm = BrokerForm.getInstance();
-                                brokerForm.getIdTextField().setText(nodeOptional.get().idString());
-                                brokerForm.getHostTextField().setText(nodeOptional.get().host());
-                                brokerForm.getPortTextField().setText(String.valueOf(nodeOptional.get().port()));
-                                brokerForm.getRackTextField().setText(nodeOptional.get().rack());
-                                MainForm.getInstance().getDataPanel().add(brokerForm.getContentPanel(), gridConstraints);
-                            }
-                        } catch (InterruptedException | ExecutionException | TimeoutException ex) {
-                            throw new RuntimeException(ex);
-                        }
+            // 叶子节点
+            if (ObjectUtils.isEmpty(selectionNode)) {
+                return;
+            }
+            TreeNode parent = selectionNode.getParent();
+            if (ObjectUtils.isEmpty(parent)) {
+                return;
+            }
+            switch (parent.toString()) {
+                case "brokers" -> {
+                    String cluster = parent.getParent().toString();
+                    AdminClient adminClient = ClientCache.get(cluster);
+                    String nodeId = selectionNode.toString();
+                    try {
+                        Collection<Node> nodes = adminClient.describeCluster().nodes().get(5, TimeUnit.SECONDS);
+                        Optional<Node> nodeOptional = nodes.stream().filter(node -> node.idString().equals(nodeId)).findFirst();
+                        nodeOptional.ifPresent(node -> {
+                            BrokerForm brokerForm = BrokerForm.getInstance();
+                            brokerForm.getIdTextField().setText(node.idString());
+                            brokerForm.getHostTextField().setText(node.host());
+                            brokerForm.getPortTextField().setText(String.valueOf(node.port()));
+                            brokerForm.getRackTextField().setText(node.rack());
+                            MainForm.getInstance().getDataPanel().add(brokerForm.getContentPanel(), gridConstraints);
+                        });
+                    } catch (InterruptedException | ExecutionException | TimeoutException ex) {
+                        throw new RuntimeException(ex);
                     }
-                    case "topics" -> {
-                        String clusterName = parent.getParent().toString();
-                        AdminClient adminClient = ClientCache.get(clusterName);
-                        String topicName = selectionNode.toString();
-                        try {
-                            Collection<TopicListing> topics = adminClient.listTopics().listings().get(5, TimeUnit.SECONDS);
-                            Optional<TopicListing> topicOptional = topics.stream().filter(topic -> topic.name().equals(topicName)).findFirst();
-                            if (topicOptional.isPresent()) {
-                                TopicForm topicForm = TopicForm.getInstance();
-                                topicForm.getTopicNameTextField().setText(topicOptional.get().name());
-                                // todo 替换"192.168.21.247:9092"
+                }
+                case "topics" -> {
+                    String cluster = parent.getParent().toString();
+                    AdminClient adminClient = ClientCache.get(cluster);
+                    String topicName = selectionNode.toString();
+                    try {
+                        Collection<TopicListing> topics = adminClient.listTopics().listings().get(5, TimeUnit.SECONDS);
+                        Optional<TopicListing> topicOptional = topics.stream().filter(topic -> topic.name().equals(topicName)).findFirst();
+                        topicOptional.ifPresent(topic -> {
+                            TopicForm topicForm = TopicForm.getInstance();
+                            topicForm.getTopicNameTextField().setText(topic.name());
+                            try (KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(Map.of(
+                                ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, cluster,
+                                ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class,
+                                ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class,
+                                ConsumerConfig.GROUP_ID_CONFIG, "kafkacli",
+                                ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest"
+                            ))) {
+                                record(topicName, topicForm, kafkaConsumer);
+                                partition(topicName, topicForm, kafkaConsumer);
+                            }
+                            config(topicName, topicForm, adminClient);
+
+
+                            MainForm.getInstance().getDataPanel().add(topicForm.getContentPanel(), gridConstraints);
+                            MainForm.getInstance().getDataPanel().updateUI();
+                        });
+                    } catch (InterruptedException | ExecutionException | TimeoutException ex) {
+                        throw new RuntimeException(ex);
+                    }
+
+                }
+                case "consumerGroups" -> {
+                    String cluster = parent.getParent().toString();
+                    AdminClient adminClient = ClientCache.get(cluster);
+                    String consumerGroupId = selectionNode.toString();
+                    try {
+                        Map<String, ConsumerGroupDescription> consumerGroups = adminClient.describeConsumerGroups(List.of(consumerGroupId)).all().get(5, TimeUnit.SECONDS);
+                        Optional<ConsumerGroupDescription> consumerGroupDescriptionOptional = consumerGroups.values().stream().filter(consumerGroupDescription -> consumerGroupDescription.groupId().equals(consumerGroupId)).findFirst();
+                        consumerGroupDescriptionOptional.ifPresent(consumerGroupDescription->{
+                            ConsumerGroupForm consumerGroupForm = ConsumerGroupForm.getInstance();
+                            consumerGroupForm.getIdTextField().setText(consumerGroupDescription.groupId());
+                            consumerGroupForm.getStateTextField().setText(consumerGroupDescription.state().toString());
+                            consumerGroupForm.getCoordinatorTextField().setText(consumerGroupDescription.coordinator().toString());
+                            consumerGroupForm.getPartitionAssignorTextField().setText(consumerGroupDescription.partitionAssignor());
+                            consumerGroupForm.getSimpleConsumerGroupTextField().setText(String.valueOf(consumerGroupDescription.isSimpleConsumerGroup()));
+                            Map<TopicPartition, OffsetAndMetadata> topicPartitionOffsets = null;
+                            try {
+                                topicPartitionOffsets = adminClient.listConsumerGroupOffsets(consumerGroupId).partitionsToOffsetAndMetadata().get(5, TimeUnit.SECONDS);
+                            } catch (InterruptedException | ExecutionException | TimeoutException ex) {
+                                throw new RuntimeException(ex);
+                            }
+                            int i = 0;
+                            for (Map.Entry<TopicPartition, OffsetAndMetadata> topicPartitionOffsetAndMetadataEntry : topicPartitionOffsets.entrySet()) {
+                                String topic = topicPartitionOffsetAndMetadataEntry.getKey().topic();
+                                int partition = topicPartitionOffsetAndMetadataEntry.getKey().partition();
+                                long offset = topicPartitionOffsetAndMetadataEntry.getValue().offset();
+                                Integer leaderEpoch = topicPartitionOffsetAndMetadataEntry.getValue().leaderEpoch().orElse(null);
+
+                                String[] headers = {"index", "topic", "partition", "start", "end", "offset", "lag", "last commit timestamp"};
+                                DefaultTableModel model = new DefaultTableModel(null, headers);
+                                JTable offsetTable = consumerGroupForm.getOffsetTable();
+
+                                offsetTable.setModel(model);
+
+                                Object[] data = new Object[8];
+                                data[0]=i;
+                                data[1] = topic;
+                                data[2] = partition;
                                 try (KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(Map.of(
-                                    ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.3.200:9092",
+                                    ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, cluster,
                                     ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class,
                                     ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class,
-                                    ConsumerConfig.GROUP_ID_CONFIG, new Snowflake().nextIdStr(),
-                                    ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,"earliest"
+                                    ConsumerConfig.GROUP_ID_CONFIG, "kafkacli",
+                                    ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest"
                                 ))) {
-                                    record(topicName, topicForm, kafkaConsumer);
-                                    partition(topicName, topicForm, kafkaConsumer);
+                                    Long start = kafkaConsumer.beginningOffsets(List.of(topicPartitionOffsetAndMetadataEntry.getKey())).values().stream().findFirst().orElseThrow();
+                                    Long end = kafkaConsumer.endOffsets(List.of(topicPartitionOffsetAndMetadataEntry.getKey())).values().stream().findFirst().orElseThrow();
+                                    Long lag;
+                                    try {
+                                        lag = kafkaConsumer.currentLag(topicPartitionOffsetAndMetadataEntry.getKey()).isPresent() ? kafkaConsumer.currentLag(topicPartitionOffsetAndMetadataEntry.getKey()).getAsLong() : null;
+                                    } catch (IllegalStateException ex) {
+                                        lag = null;
+                                    }
+                                    Long position;
+                                    try {
+                                        position = kafkaConsumer.position(topicPartitionOffsetAndMetadataEntry.getKey());
+                                    } catch (Exception ex) {
+                                        position = null;
+                                    }
+                                    kafkaConsumer.committed(Set.of(topicPartitionOffsetAndMetadataEntry.getKey()));
+
+                                    data[3] = start;
+                                    data[4] = end;
+                                    data[5] = offset;
+                                    data[6] = lag;
+                                    data[7] = position;
                                 }
-                                config(topicName, topicForm, adminClient);
-
-
-                                MainForm.getInstance().getDataPanel().add(topicForm.getContentPanel(), gridConstraints);
-                                MainForm.getInstance().getDataPanel().updateUI();
+                                model.addRow(data);
+                                i++;
                             }
-                        } catch (InterruptedException | ExecutionException | TimeoutException ex) {
-                            throw new RuntimeException(ex);
-                        }
 
+                            MainForm.getInstance().getDataPanel().add(consumerGroupForm.getContentPanel(), gridConstraints);
+                            MainForm.getInstance().getDataPanel().updateUI();
+                        });
+                    } catch (InterruptedException | ExecutionException | TimeoutException ex) {
+                        throw new RuntimeException(ex);
                     }
-                    case "consumerGroups" -> {
 
-                    }
-                    default -> throw new IllegalStateException("Unexpected value: " + parent.toString());
                 }
+                default -> throw new IllegalStateException("Unexpected value: " + parent.toString());
+            }
 //            }
         });
 
@@ -175,16 +275,103 @@ public class MainFormListener {
                 log.error("create new connection dialog failed. {}", exception.getMessage());
             }
         });
+        brokersRefreshMenuItem.addActionListener(e -> {
+            DefaultMutableTreeNode selectionNode = (DefaultMutableTreeNode) clusterTree.getLastSelectedPathComponent();
+            DefaultMutableTreeNode parent = (DefaultMutableTreeNode) selectionNode.getParent();
+            String cluster = parent.toString();
+            AdminClient adminClient = ClientCache.get(cluster);
+            selectionNode.removeFromParent();
+//            DefaultTreeModel rootTreeModel = (DefaultTreeModel) clusterTree.getModel();
+//            rootTreeModel.removeNodeFromParent(selectionNode);
+            try  {
+                NewConnListener.buildBrokers(adminClient, parent);
+            } catch (Exception exception) {
+                log.info("connect kafka failed. {}", exception.getMessage());
+                JOptionPane.showMessageDialog(mainForm.getContentPanel(), "连接失败！请检查配置\n\n", "失败", JOptionPane.ERROR_MESSAGE);
+                throw BaseException.of(BaseErrorCode.CONNECTION_FAILED);
+            }
+            clusterTree.updateUI();
+        });
+        topicsRefreshMenuItem.addActionListener(e -> {
+            DefaultMutableTreeNode selectionNode = (DefaultMutableTreeNode) clusterTree.getLastSelectedPathComponent();
+            DefaultMutableTreeNode parent = (DefaultMutableTreeNode) selectionNode.getParent();
+            String cluster = parent.toString();
+            AdminClient adminClient = ClientCache.get(cluster);
+            selectionNode.removeFromParent();
+//            DefaultTreeModel rootTreeModel = (DefaultTreeModel) clusterTree.getModel();
+//            rootTreeModel.removeNodeFromParent(selectionNode);
+            try  {
+                NewConnListener.buildTopics(adminClient, parent);
+            } catch (Exception exception) {
+                log.info("connect kafka failed. {}", exception.getMessage());
+                JOptionPane.showMessageDialog(mainForm.getContentPanel(), "连接失败！请检查配置\n\n", "失败", JOptionPane.ERROR_MESSAGE);
+                throw BaseException.of(BaseErrorCode.CONNECTION_FAILED);
+            }
+            clusterTree.updateUI();
+        });
+        topicsCreateMenuItem.addActionListener(e->{
+            DefaultMutableTreeNode selectionNode = (DefaultMutableTreeNode) clusterTree.getLastSelectedPathComponent();
+            try {
+                String cluster = selectionNode.getParent().toString();
+                CreateTopicDialog dialog = new CreateTopicDialog(cluster);
+                dialog.pack();
+                dialog.setVisible(true);
+            } catch (Exception exception) {
+                log.error("create new topic dialog failed. {}", exception.getMessage());
+            }
+        });
 
-//        mainForm.getButtonCreateConn().addActionListener(e -> {
-//            try {
-//                NewConnDialog dialog = new NewConnDialog();
-//                dialog.pack();
-//                dialog.setVisible(true);
-//            } catch (Exception exception) {
-//                log.error("create new connection dialog failed. {}", exception.getMessage());
-//            }
-//        });
+        topicDeleteMenuItem.addActionListener(e -> {
+            DefaultMutableTreeNode selectionNode = (DefaultMutableTreeNode) clusterTree.getLastSelectedPathComponent();
+            try {
+                int response = JOptionPane.showConfirmDialog(mainForm.getContentPanel(), "即将删除topic，所有数据将丢失！请确认\n\n", "警告", JOptionPane.OK_CANCEL_OPTION);
+                if (response == 0) {
+                    log.info("按下确定按钮!");
+                    String cluster = selectionNode.getParent().toString();
+                    AdminClient adminClient = ClientCache.get(cluster);
+
+                    adminClient.deleteTopics(List.of(selectionNode.toString()));
+                }
+
+            } catch (Exception exception) {
+                log.error("delete topic dialog failed. {}", exception.getMessage());
+            }
+        });
+
+        consumerGroupsRefreshMenuItem.addActionListener(e -> {
+            DefaultMutableTreeNode selectionNode = (DefaultMutableTreeNode) clusterTree.getLastSelectedPathComponent();
+            DefaultMutableTreeNode parent = (DefaultMutableTreeNode) selectionNode.getParent();
+            String cluster = parent.toString();
+            AdminClient adminClient = ClientCache.get(cluster);
+            selectionNode.removeFromParent();
+//            DefaultTreeModel rootTreeModel = (DefaultTreeModel) clusterTree.getModel();
+//            rootTreeModel.removeNodeFromParent(selectionNode);
+
+            try  {
+                NewConnListener.buildConsumerGroups(adminClient, parent);
+            } catch (Exception exception) {
+                log.info("connect kafka failed. {}", exception.getMessage());
+                JOptionPane.showMessageDialog(mainForm.getContentPanel(), "连接失败！请检查配置\n\n", "失败", JOptionPane.ERROR_MESSAGE);
+                throw BaseException.of(BaseErrorCode.CONNECTION_FAILED);
+            }
+            clusterTree.updateUI();
+        });
+        consumerGroupDeleteMenuItem.addActionListener(e -> {
+            DefaultMutableTreeNode selectionNode = (DefaultMutableTreeNode) clusterTree.getLastSelectedPathComponent();
+            try {
+                int response = JOptionPane.showConfirmDialog(mainForm.getContentPanel(), "即将删除consumerGroup，所有数据将丢失！请确认\n\n", "警告", JOptionPane.OK_CANCEL_OPTION);
+                if (response == 0) {
+                    log.info("按下确定按钮!");
+                    String cluster = selectionNode.getParent().toString();
+                    AdminClient adminClient = ClientCache.get(cluster);
+
+                    adminClient.deleteConsumerGroups(List.of(selectionNode.toString()));
+                }
+
+            } catch (Exception exception) {
+                log.error("delete topic dialog failed. {}", exception.getMessage());
+            }
+        });
 
     }
 
@@ -192,12 +379,6 @@ public class MainFormListener {
         String[] headers = {"index", "key", "value"};
         DefaultTableModel model = new DefaultTableModel(null, headers);
         JTable configTable = topicForm.getConfigTable();
-
-        configTable.getTableHeader().setVisible(true);
-        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
-        renderer.setPreferredSize(new Dimension(configTable.getWidth(), 10));
-        configTable.getTableHeader().setDefaultRenderer(renderer);
-
         configTable.setModel(model);
         Object[] data = new Object[3];
         try {
@@ -221,11 +402,6 @@ public class MainFormListener {
         DefaultTableModel model = new DefaultTableModel(null, headers);
         JTable partitionTable = topicForm.getPartitionTable();
 
-        partitionTable.getTableHeader().setVisible(true);
-        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
-        renderer.setPreferredSize(new Dimension(partitionTable.getWidth(), 10));
-        partitionTable.getTableHeader().setDefaultRenderer(renderer);
-
         partitionTable.setModel(model);
         Object[] data = new Object[3];
         List<PartitionInfo> partitionInfos = kafkaConsumer.partitionsFor(topicName, Duration.of(5, ChronoUnit.SECONDS));
@@ -244,11 +420,6 @@ public class MainFormListener {
         String[] headers = {"index", "partition", "offset", "key", "value", "timestamp"};
         DefaultTableModel model = new DefaultTableModel(null, headers);
         JTable dataTable = topicForm.getDataTable();
-
-        dataTable.getTableHeader().setVisible(true);
-        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
-        renderer.setPreferredSize(new Dimension(dataTable.getWidth(), 10));
-        dataTable.getTableHeader().setDefaultRenderer(renderer);
 
         dataTable.setModel(model);
         Object[] data = new Object[6];
