@@ -99,7 +99,6 @@ public class NewConnListener {
         String clusterName = dialog.getClusterNameTextField().getText();
         String bootstrapServers = dialog.getBootstrapServersTextField().getText();
         MainForm mainForm = MainForm.getInstance();
-        mainForm.setAdminClient(adminClient);
         DefaultTreeModel rootTreeNode = (DefaultTreeModel) mainForm.getClusterTree().getModel();
         MutableTreeNode root = (MutableTreeNode) rootTreeNode.getRoot();
         // 判断同名节点是否存在

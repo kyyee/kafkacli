@@ -3,7 +3,7 @@ package com.kyyee.kafkacli.ui.dialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import com.kyyee.kafkacli.App;
+import com.kyyee.kafkacli.ui.frame.MainFrame;
 import com.kyyee.kafkacli.ui.utils.ComponentUtils;
 import lombok.Getter;
 
@@ -16,7 +16,7 @@ public class SupportMeDialog extends JDialog {
     private JButton buttonOK;
 
     public SupportMeDialog() {
-        super(App.mainFrame, "鼓励和支持");
+        super(MainFrame.getInstance(), "鼓励和支持");
         ComponentUtils.setPreferSizeAndLocateToCenter(this, 0.4, 0.7);
         super.setContentPane(getContentPane());
         setModal(true);

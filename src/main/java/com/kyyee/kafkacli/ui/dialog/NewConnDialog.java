@@ -3,7 +3,7 @@ package com.kyyee.kafkacli.ui.dialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import com.kyyee.kafkacli.App;
+import com.kyyee.kafkacli.ui.frame.MainFrame;
 import com.kyyee.kafkacli.ui.utils.ComponentUtils;
 import lombok.Getter;
 
@@ -23,7 +23,7 @@ public class NewConnDialog extends JDialog {
     private JScrollPane settingScrollPane;
 
     public NewConnDialog() {
-        super(App.mainFrame, "新建连接");
+        super(MainFrame.getInstance(), "新建连接");
         ComponentUtils.setPreferSizeAndLocateToCenter(this, 0.4, 0.3);
         super.setContentPane(getContentPane());
         setModal(true);

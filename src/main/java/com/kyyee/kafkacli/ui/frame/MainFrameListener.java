@@ -2,7 +2,6 @@ package com.kyyee.kafkacli.ui.frame;
 
 
 import com.formdev.flatlaf.util.SystemInfo;
-import com.kyyee.kafkacli.ui.Ui;
 import com.kyyee.kafkacli.ui.configs.UserConfig;
 import com.kyyee.kafkacli.ui.form.MainForm;
 
@@ -18,7 +17,7 @@ public class MainFrameListener {
         mainFrame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                Ui.saveBeforeExit();
+                MainFrame.saveBeforeExit();
                 if (UserConfig.getInstance().isTray()) {
                     if (SystemInfo.isWindows) {
                         // 托盘显示
@@ -27,17 +26,19 @@ public class MainFrameListener {
                         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                     }
                 } else {
-                    Ui.shutdown();
+                    MainFrame.shutdown();
                 }
             }
         });
 
+        MainFrame.getInstance().setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
         MainForm.getInstance().getMainPanel().registerKeyboardAction(e -> {
-            Ui.saveBeforeExit();
+            MainFrame.saveBeforeExit();
             if (UserConfig.getInstance().isTray()) {
                 mainFrame.setVisible(false);
             } else {
-                Ui.shutdown();
+                MainFrame.shutdown();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
     }

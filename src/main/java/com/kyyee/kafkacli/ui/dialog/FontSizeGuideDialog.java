@@ -3,8 +3,8 @@ package com.kyyee.kafkacli.ui.dialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import com.kyyee.kafkacli.App;
 import com.kyyee.kafkacli.ui.configs.UserConfig;
+import com.kyyee.kafkacli.ui.frame.MainFrame;
 import com.kyyee.kafkacli.ui.utils.ComponentUtils;
 import lombok.Getter;
 
@@ -20,7 +20,7 @@ public class FontSizeGuideDialog extends JDialog {
     private JButton buttonOK;
 
     public FontSizeGuideDialog() {
-        super(App.mainFrame, "字号初始化向导");
+        super(MainFrame.getInstance(), "字号初始化向导");
         ComponentUtils.setPreferSizeAndLocateToCenter(this, 400, 200, false);
         super.setContentPane(getContentPane());
         setModal(true);

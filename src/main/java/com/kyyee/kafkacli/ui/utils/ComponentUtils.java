@@ -1,13 +1,13 @@
 package com.kyyee.kafkacli.ui.utils;
 
-import com.kyyee.kafkacli.App;
+import com.kyyee.kafkacli.ui.frame.MainFrame;
 
 import java.awt.*;
 
 public class ComponentUtils {
     private static final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-    private static final Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(App.mainFrame.getGraphicsConfiguration());
+    private static final Insets screenInsets = Toolkit.getDefaultToolkit().getScreenInsets(MainFrame.getInstance().getGraphicsConfiguration());
 
     private static final int screenWidth = screenSize.width - screenInsets.left - screenInsets.right;
 

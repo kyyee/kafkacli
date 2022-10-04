@@ -5,13 +5,12 @@ import com.formdev.flatlaf.extras.FlatAnimatedLafChange;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.kyyee.framework.common.exception.BaseErrorCode;
 import com.kyyee.framework.common.exception.BaseException;
-import com.kyyee.kafkacli.App;
-import com.kyyee.kafkacli.ui.Ui;
 import com.kyyee.kafkacli.ui.Upgrade;
 import com.kyyee.kafkacli.ui.configs.SystemConfig;
 import com.kyyee.kafkacli.ui.configs.UserConfig;
 import com.kyyee.kafkacli.ui.dialog.*;
 import com.kyyee.kafkacli.ui.form.MainForm;
+import com.kyyee.kafkacli.ui.frame.MainFrame;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
@@ -126,9 +125,9 @@ public class TopMenuBar extends JMenuBar {
         defaultMaxWindowMenuItem.addActionListener(e -> {
             boolean defaultMaxWindow = defaultMaxWindowMenuItem.isSelected();
             if (defaultMaxWindow) {
-                App.mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                MainFrame.getInstance().setExtendedState(JFrame.MAXIMIZED_BOTH);
             } else {
-                App.mainFrame.setExtendedState(JFrame.NORMAL);
+                MainFrame.getInstance().setExtendedState(JFrame.NORMAL);
             }
             UserConfig.getInstance().setDefaultMaxWindow(defaultMaxWindow);
             UserConfig.getInstance().flush();
@@ -218,7 +217,7 @@ public class TopMenuBar extends JMenuBar {
     }
 
     private void exitActionPerformed() {
-        Ui.shutdown();
+        MainFrame.shutdown();
     }
 
     private void supportMeActionPerformed() {
@@ -271,7 +270,7 @@ public class TopMenuBar extends JMenuBar {
             Upgrade.checkUpdate(false);
         } catch (Exception exception) {
             log.error("open update info dialog failed. {}", exception.getMessage());
-            JOptionPane.showMessageDialog(App.mainFrame, "检查更新失败，请检查网络！", "网络错误", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(MainFrame.getInstance(), "检查更新失败，请检查网络！", "网络错误", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -312,13 +311,13 @@ public class TopMenuBar extends JMenuBar {
             UserConfig.getInstance().setTheme(selectedThemeName);
             UserConfig.getInstance().flush();
 
-            Ui.initTheme();
+            MainFrame.initTheme();
 
             if (FlatLaf.isLafDark()) {
                 FlatSVGIcon.ColorFilter.getInstance().setMapper(color -> color.brighter().brighter());
             }
 
-            SwingUtilities.updateComponentTreeUI(App.mainFrame);
+            SwingUtilities.updateComponentTreeUI(MainFrame.getInstance());
             SwingUtilities.updateComponentTreeUI(MainForm.getInstance().getMainTabbedPane());
 
 //                FlatLaf.updateUI();
@@ -362,8 +361,8 @@ public class TopMenuBar extends JMenuBar {
             UserConfig.getInstance().setFontFamily(selectedFamily);
             UserConfig.getInstance().flush();
 
-            Ui.initGlobalFont();
-            SwingUtilities.updateComponentTreeUI(App.mainFrame);
+            MainFrame.initGlobalFont();
+            SwingUtilities.updateComponentTreeUI(MainFrame.getInstance());
             SwingUtilities.updateComponentTreeUI(MainForm.getInstance().getMainTabbedPane());
 
 //                FlatLaf.updateUI();
@@ -406,8 +405,8 @@ public class TopMenuBar extends JMenuBar {
             UserConfig.getInstance().setFontSize(Integer.parseInt(selectedFontSize));
             UserConfig.getInstance().flush();
 
-            Ui.initGlobalFont();
-            SwingUtilities.updateComponentTreeUI(App.mainFrame);
+            MainFrame.initGlobalFont();
+            SwingUtilities.updateComponentTreeUI(MainFrame.getInstance());
             SwingUtilities.updateComponentTreeUI(MainForm.getInstance().getMainTabbedPane());
 
 //                FlatLaf.updateUI();

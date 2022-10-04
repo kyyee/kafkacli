@@ -3,7 +3,7 @@ package com.kyyee.kafkacli.ui.dialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import com.kyyee.kafkacli.App;
+import com.kyyee.kafkacli.ui.frame.MainFrame;
 import com.kyyee.kafkacli.ui.utils.ComponentUtils;
 import lombok.Getter;
 
@@ -26,7 +26,7 @@ public class UpdateInfoDialog extends JDialog {
     }
 
     public UpdateInfoDialog() {
-        super(App.mainFrame, "惊现新版本");
+        super(MainFrame.getInstance(), "惊现新版本");
         ComponentUtils.setPreferSizeAndLocateToCenter(this, 0.4, 0.64);
         super.setContentPane(getContentPane());
         setModal(true);

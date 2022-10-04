@@ -3,9 +3,8 @@ package com.kyyee.kafkacli.ui.form;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import com.kyyee.kafkacli.App;
+import com.kyyee.kafkacli.ui.frame.MainFrame;
 import lombok.Getter;
-import org.apache.kafka.clients.admin.AdminClient;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -26,12 +25,6 @@ public class MainForm {
     private JLabel tipsLabel;
     private static MainForm mainForm;
 
-    private AdminClient adminClient;
-
-    public void setAdminClient(AdminClient adminClient) {
-        this.adminClient = adminClient;
-    }
-
     public static MainForm getInstance() {
         if (mainForm == null) {
             mainForm = new MainForm();
@@ -41,7 +34,7 @@ public class MainForm {
 
     public void init() {
         getMainPanel().setVisible(true);
-        getBrowserSplitPane().setDividerLocation(App.mainFrame.getWidth() / 5);
+        getBrowserSplitPane().setDividerLocation(MainFrame.getInstance().getWidth() / 5);
         //创建树节点
 
         DefaultTreeModel rootTreeModel = new DefaultTreeModel(new DefaultMutableTreeNode("cluster"), true);
@@ -50,9 +43,10 @@ public class MainForm {
 
         getBrowserSplitPane().setLeftComponent(clusterTree);
         // 树形最小尺寸
-        mainForm.getClusterTreeScrollPane().setMinimumSize(new Dimension(400, 400));
+        getInstance().getClusterTreeScrollPane().setMinimumSize(new Dimension(400, 400));
 
         MainFormListener.addListener(this);
+        getMainPanel().updateUI();
 
     }
 

@@ -1,6 +1,7 @@
 package com.kyyee.kafkacli.common.component.server;
 
-import com.kyyee.kafkacli.ui.Ui;
+import com.kyyee.kafkacli.ui.frame.MainFrame;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 
@@ -10,18 +11,21 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 @Slf4j
+@Getter
 public class SocketServer implements Closeable {
-    public static int port = 60000;
+    private int port = 60000;
 
     private ServerSocket server;
-    private static SocketServer socketServer;
+    private static SocketServer instance;
 
 
     public static SocketServer getInstance() {
-        if (socketServer == null) {
-            socketServer = new SocketServer();
+        if (instance == null) {
+            synchronized (SocketServer.class) {
+                instance = new SocketServer();
+            }
         }
-        return socketServer;
+        return instance;
     }
 
     public final void run() {
@@ -29,27 +33,19 @@ public class SocketServer implements Closeable {
         while (port < 65535) {
             try {
                 server = new ServerSocket(port);
-                log.info("server start");
+                log.info("KafkaCli initialized with port(s): {} (socket)", port);
+                break;
             } catch (Exception ignored) {
                 port++;
             }
-            break;
         }
 
         while (true) {
             //监听客户端是否有连接
-            try (Socket socket = server.accept()) {
+            try (Socket ignored = server.accept()) {
                 //窗口在任务栏闪动
-                log.info("has start server");
-                Ui.showMainFrame();
-
-//                if (App.mainFrame.getExtendedState() == Frame.ICONIFIED) {
-//                    App.mainFrame.setExtendedState(Frame.NORMAL);
-//                } else {
-//                    App.mainFrame.toFront();
-//                    App.mainFrame.requestFocus();
-//                    App.mainFrame.repaint();
-//                }
+                log.info("KafkaCli has started, show App mainFrame");
+                MainFrame.showMainFrame();
             } catch (Exception ignored) {
             }
         }

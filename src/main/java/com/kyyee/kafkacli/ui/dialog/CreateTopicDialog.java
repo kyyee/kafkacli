@@ -3,13 +3,12 @@ package com.kyyee.kafkacli.ui.dialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import com.kyyee.kafkacli.App;
+import com.kyyee.kafkacli.ui.frame.MainFrame;
 import com.kyyee.kafkacli.ui.utils.ComponentUtils;
 import lombok.Getter;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
@@ -29,7 +28,7 @@ public class CreateTopicDialog extends JDialog {
     private String clusterName;
 
     public CreateTopicDialog(String clusterName) {
-        super(App.mainFrame, "新建Topic");
+        super(MainFrame.getInstance(), "新建Topic");
         ComponentUtils.setPreferSizeAndLocateToCenter(this, 0.3, 0.7);
         super.setContentPane(getContentPane());
         setModal(true);

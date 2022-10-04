@@ -9,9 +9,9 @@ import com.formdev.flatlaf.util.SystemInfo;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import com.kyyee.kafkacli.App;
 import com.kyyee.kafkacli.common.utils.JSON;
 import com.kyyee.kafkacli.ui.UiConsts;
+import com.kyyee.kafkacli.ui.frame.MainFrame;
 import com.kyyee.kafkacli.ui.utils.ComponentUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +36,7 @@ public class UpdateDialog extends JDialog {
     Future<?> downloadTask;
 
     public UpdateDialog() {
-        super(App.mainFrame, "下载新版");
+        super(MainFrame.getInstance(), "下载新版");
         ComponentUtils.setPreferSizeAndLocateToCenter(this, 600, 200);
         super.setContentPane(getContentPane());
         setModal(true);
@@ -53,7 +53,7 @@ public class UpdateDialog extends JDialog {
             // 从github获取最新版本相关信息
             String downloadLinkInfo = HttpUtil.get(UiConsts.DOWNLOAD_LINK_INFO_URL);
             if (StringUtils.isEmpty(downloadLinkInfo) || downloadLinkInfo.contains("404: Not Found")) {
-                JOptionPane.showMessageDialog(App.mainFrame, "获取下载链接失败，请关注Github Release！", "网络错误", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(MainFrame.getInstance(), "获取下载链接失败，请关注Github Release！", "网络错误", JOptionPane.INFORMATION_MESSAGE);
                 return;
             } else {
                 JsonNode jsonNode = JSON.toJsonNode(downloadLinkInfo);
