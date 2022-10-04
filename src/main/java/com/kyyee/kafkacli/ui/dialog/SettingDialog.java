@@ -7,9 +7,9 @@ import com.formdev.flatlaf.util.LoggingFacade;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import com.kyyee.kafkacli.App;
 import com.kyyee.kafkacli.ui.component.TopMenuBar;
 import com.kyyee.kafkacli.ui.configs.UserConfig;
+import com.kyyee.kafkacli.ui.frame.MainFrame;
 import com.kyyee.kafkacli.ui.utils.ComponentUtils;
 import lombok.Getter;
 
@@ -57,7 +57,7 @@ public class SettingDialog extends JDialog {
     private final JToggleButton[] accentColorButtons = new JToggleButton[accentColorKeys.length];
 
     public SettingDialog() {
-        super(App.mainFrame, "设置");
+        super(MainFrame.getInstance(), "设置");
         ComponentUtils.setPreferSizeAndLocateToCenter(this, 0.5, 0.68);
         super.setContentPane(getContentPane());
         setModal(true);

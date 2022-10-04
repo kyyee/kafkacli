@@ -91,6 +91,7 @@ public class ConsumerGroupForm {
         label5.setText("SimpleConsumerGroup");
         panel1.add(label5, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         simpleConsumerGroupTextField = new JTextField();
+        simpleConsumerGroupTextField.setEditable(false);
         panel1.add(simpleConsumerGroupTextField, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final Spacer spacer1 = new Spacer();
         propertiesPanel.add(spacer1, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
@@ -106,4 +107,5 @@ public class ConsumerGroupForm {
     public JComponent $$$getRootComponent$$$() {
         return contentPanel;
     }
+
 }

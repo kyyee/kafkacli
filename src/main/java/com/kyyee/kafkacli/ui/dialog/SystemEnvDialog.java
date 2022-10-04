@@ -3,7 +3,7 @@ package com.kyyee.kafkacli.ui.dialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import com.kyyee.kafkacli.App;
+import com.kyyee.kafkacli.ui.frame.MainFrame;
 import com.kyyee.kafkacli.ui.utils.ComponentUtils;
 import lombok.Getter;
 
@@ -18,7 +18,7 @@ public class SystemEnvDialog extends JDialog {
     private JTextArea contentTextArea;
 
     public SystemEnvDialog() {
-        super(App.mainFrame, "系统环境变量");
+        super(MainFrame.getInstance(), "系统环境变量");
         ComponentUtils.setPreferSizeAndLocateToCenter(this, 0.4, 0.7);
         super.setContentPane(getContentPane());
         setModal(true);

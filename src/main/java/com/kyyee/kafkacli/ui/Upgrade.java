@@ -3,11 +3,11 @@ package com.kyyee.kafkacli.ui;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.http.HttpUtil;
-import com.kyyee.kafkacli.App;
 import com.kyyee.kafkacli.common.utils.JSON;
 import com.kyyee.kafkacli.ui.bean.VersionInfo;
 import com.kyyee.kafkacli.ui.configs.UserConfig;
 import com.kyyee.kafkacli.ui.dialog.UpdateInfoDialog;
+import com.kyyee.kafkacli.ui.frame.MainFrame;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -28,13 +28,13 @@ public class Upgrade {
         String versionStr = HttpUtil.get(UiConsts.CHECK_VERSION_URL, 3000);
         if (StringUtils.isEmpty(versionStr)) {
             if (!initCheck) {
-                JOptionPane.showMessageDialog(App.mainFrame, "检查超时，请关注GitHub Release！", "网络错误", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(MainFrame.getInstance(), "检查超时，请关注GitHub Release！", "网络错误", JOptionPane.INFORMATION_MESSAGE);
             }
             return;
         }
         if (versionStr.contains("404: Not Found")) {
             if (!initCheck) {
-                JOptionPane.showMessageDialog(App.mainFrame, "链接无效，请关注GitHub Release！", "链接无效", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(MainFrame.getInstance(), "链接无效，请关注GitHub Release！", "链接无效", JOptionPane.INFORMATION_MESSAGE);
             }
             return;
         }
@@ -65,7 +65,7 @@ public class Upgrade {
             updateInfoDialog.setVisible(true);
         } else {
             if (!initCheck) {
-                JOptionPane.showMessageDialog(App.mainFrame, "当前已经是最新版本！", "恭喜", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(MainFrame.getInstance(), "当前已经是最新版本！", "恭喜", JOptionPane.INFORMATION_MESSAGE);
             }
         }
     }
@@ -94,7 +94,7 @@ public class Upgrade {
             // 然后取两个版本对应的索引
             String versionStr = FileUtil.readString(UiConsts.class.getResource("/version.json"), CharsetUtil.CHARSET_UTF_8);
             if (StringUtils.isEmpty(versionStr)) {
-                JOptionPane.showMessageDialog(App.mainFrame, "版本信息获取失败，请联系作者！", "信息错误", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(MainFrame.getInstance(), "版本信息获取失败，请联系作者！", "信息错误", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
             VersionInfo versionInfo = JSON.toBean(versionStr, VersionInfo.class);

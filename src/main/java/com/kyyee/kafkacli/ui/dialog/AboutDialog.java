@@ -3,8 +3,8 @@ package com.kyyee.kafkacli.ui.dialog;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
-import com.kyyee.kafkacli.App;
 import com.kyyee.kafkacli.ui.UiConsts;
+import com.kyyee.kafkacli.ui.frame.MainFrame;
 import com.kyyee.kafkacli.ui.utils.ComponentUtils;
 import lombok.Getter;
 
@@ -32,7 +32,7 @@ public class AboutDialog extends JDialog {
     private JLabel codeGitHubLabel;
 
     public AboutDialog() {
-        super(App.mainFrame, "关于");
+        super(MainFrame.getInstance(), "关于");
         ComponentUtils.setPreferSizeAndLocateToCenter(this, 0.5, 0.68);
         super.setContentPane(getContentPane());
         setModal(true);
