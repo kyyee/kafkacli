@@ -36,7 +36,12 @@ public class MainFrameListener {
         MainForm.getInstance().getMainPanel().registerKeyboardAction(e -> {
             MainFrame.saveBeforeExit();
             if (UserConfig.getInstance().isTray()) {
-                mainFrame.setVisible(false);
+                if (SystemInfo.isWindows) {
+                    // 托盘显示
+                    mainFrame.setVisible(false);
+                } else {
+                    mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                }
             } else {
                 MainFrame.shutdown();
             }

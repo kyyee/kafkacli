@@ -41,13 +41,6 @@ public class SettingListener {
                 UserConfig.getInstance().setTray(dialog.getTrayCheckBox().isSelected());
                 UserConfig.getInstance().setLanguage(dialog.getLanguageComboBox().getSelectedItem().toString());
                 UserConfig.getInstance().setFontFamily(dialog.getFontFamilyComboBox().getSelectedItem().toString());
-//            .fontFamilyChanged(new ActionEvent(dialog, ActionEvent.ACTION_PERFORMED, dialog.getFontFamilyComboBox().getSelectedItem().toString()));
-
-
-                // 使用习惯
-                UserConfig.getInstance().setMenuBarPosition(dialog.getMenuBarPositionComboBox().getSelectedItem().toString());
-                resetMenuBar();
-
                 // 高级
                 UserConfig.getInstance().setDbFilePath(dialog.getDbFilePathTextField().getText());
                 UserConfig.getInstance().setUserConfigPath(dialog.getDbFilePathTextField().getText());
@@ -105,15 +98,6 @@ public class SettingListener {
             }
         });
 
-    }
-
-    private static void resetMenuBar() {
-//        QuickNoteForm.init();
-//        JsonBeautyForm.init();
-//        HostForm.init();
-//        HttpRequestForm.init();
-//        QrCodeForm.init();
-//        CryptoForm.init();
     }
 
     private static void doCopyBefore(SettingDialog dialog) {

@@ -18,11 +18,11 @@ public class MainForm {
     private JTree clusterTree;
     private JSplitPane browserSplitPane;
     private JPanel contentPanel;
-    private JScrollPane clusterTreeScrollPane;
     private JScrollPane dataScrollPane;
     private JPanel dataPanel;
     private JPanel indicatorPanel;
     private JLabel tipsLabel;
+    private JScrollPane clusterTreeScrollPane;
     private static MainForm mainForm;
 
     public static MainForm getInstance() {
@@ -34,7 +34,6 @@ public class MainForm {
 
     public void init() {
         getMainPanel().setVisible(true);
-        getBrowserSplitPane().setDividerLocation(MainFrame.getInstance().getWidth() / 5);
         //创建树节点
 
         DefaultTreeModel rootTreeModel = new DefaultTreeModel(new DefaultMutableTreeNode("cluster"), true);
@@ -42,8 +41,10 @@ public class MainForm {
         getClusterTree().setEditable(true);
 
         getBrowserSplitPane().setLeftComponent(clusterTree);
-        // 树形最小尺寸
-        getInstance().getClusterTreeScrollPane().setMinimumSize(new Dimension(400, 400));
+        // 右侧table最小最大尺寸
+        getClusterTreeScrollPane().setMinimumSize(new Dimension(MainFrame.getInstance().getWidth() / 5, -1));
+        getDataScrollPane().setMinimumSize(new Dimension(MainFrame.getInstance().getWidth() / 5, -1));
+        getBrowserSplitPane().setDividerLocation(MainFrame.getInstance().getWidth() / 5);
 
         MainFormListener.addListener(this);
         getMainPanel().updateUI();
@@ -74,15 +75,18 @@ public class MainForm {
         contentPanel.add(mainTabbedPane, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(200, 200), null, 0, false));
         browserSplitPane = new JSplitPane();
         mainTabbedPane.addTab("Browser", browserSplitPane);
-        clusterTreeScrollPane = new JScrollPane();
-        browserSplitPane.setLeftComponent(clusterTreeScrollPane);
-        clusterTree = new JTree();
-        clusterTreeScrollPane.setViewportView(clusterTree);
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        browserSplitPane.setRightComponent(panel1);
+        browserSplitPane.setLeftComponent(panel1);
+        clusterTreeScrollPane = new JScrollPane();
+        panel1.add(clusterTreeScrollPane, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        clusterTree = new JTree();
+        clusterTreeScrollPane.setViewportView(clusterTree);
+        final JPanel panel2 = new JPanel();
+        panel2.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
+        browserSplitPane.setRightComponent(panel2);
         dataScrollPane = new JScrollPane();
-        panel1.add(dataScrollPane, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        panel2.add(dataScrollPane, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         dataPanel = new JPanel();
         dataPanel.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
         dataScrollPane.setViewportView(dataPanel);
@@ -109,5 +113,9 @@ public class MainForm {
      */
     public JComponent $$$getRootComponent$$$() {
         return mainPanel;
+    }
+
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
     }
 }

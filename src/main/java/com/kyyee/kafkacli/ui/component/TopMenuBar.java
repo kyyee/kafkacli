@@ -314,7 +314,7 @@ public class TopMenuBar extends JMenuBar {
             MainFrame.initTheme();
 
             if (FlatLaf.isLafDark()) {
-                FlatSVGIcon.ColorFilter.getInstance().setMapper(color -> color.brighter().brighter());
+                FlatSVGIcon.ColorFilter.getInstance().setMapper(Color::brighter);
             }
 
             SwingUtilities.updateComponentTreeUI(MainFrame.getInstance());
