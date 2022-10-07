@@ -9,7 +9,7 @@ public class UiConsts {
      * 软件名称,版本
      */
     public static final String APP_NAME = "KafkaCli";
-    public static final String APP_VERSION = "v1.0.0";
+    public static final String APP_VERSION = "v1.0.0-alpha";
 
     public static final int TABLE_ROW_HEIGHT = 36;
 //

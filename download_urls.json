@@ -1,5 +1,5 @@
 {
-  "windows": "https://github.com/kyyee/kafkacli/download/kafkacli_1.0.0.exe",
-  "mac": "https://github.com/kyyee/kafkacli/download/kafkacli_1.0.0.dmg",
-  "linux": "https://github.com/kyyee/kafkacli/download/kafkacli_1.0.0.deb"
+  "windows": "https://github.com/kyyee/kafkacli/releases/download/v1.0.0-alpha/kafkacli_1.0.0.exe",
+  "mac":     "https://github.com/kyyee/kafkacli/releases/download/v1.0.0-alpha/kafkacli_1.0.0.dmg",
+  "linux":   "https://github.com/kyyee/kafkacli/releases/download/v1.0.0-alpha/kafkacli_1.0.0.deb"
 }
