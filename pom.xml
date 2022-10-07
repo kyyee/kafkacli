@@ -2,246 +2,222 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <artifactId>kafkacli</artifactId>
-    <groupId>com.kyyee</groupId>
-    <version>1.0.0</version>
-    <modelVersion>4.0.0</modelVersion>
-    <packaging>jar</packaging>
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.7.3</version>
+    <relativePath/> <!-- lookup parent from repository -->
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.7.RELEASE</version>
-        <relativePath/>
-    </parent>
+  <groupId>com.kyyee.kafkacli</groupId>
+  <artifactId>kafkacli</artifactId>
+  <version>1.0.0</version>
+  <name>${project.artifactId}</name>
+  <url>https://github.com/kyyee/kafkacli</url>
+  <description>kafka desktop client for developers</description>
+  <packaging>jar</packaging>
 
-    <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <maven.repository>${user.home}/.m2/repository</maven.repository>
-    </properties>
-    <dependencies>
+  <properties>
+    <exec.mainClass>com.kyyee.kafkacli.App</exec.mainClass>
+    <java.version>17</java.version>
+    <!--    <maven.repository>${user.home}/.m2/repository</maven.repository>-->
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
-        </dependency>
+  <dependencies>
+    <dependency>
+      <groupId>com.formdev</groupId>
+      <artifactId>flatlaf</artifactId>
+      <version>2.4</version>
+    </dependency>
+    <dependency>
+      <groupId>com.formdev</groupId>
+      <artifactId>flatlaf-extras</artifactId>
+      <version>2.4</version>
+    </dependency>
+    <dependency>
+      <groupId>com.formdev</groupId>
+      <artifactId>flatlaf-intellij-themes</artifactId>
+      <version>2.4</version>
+    </dependency>
+    <dependency>
+      <groupId>cn.hutool</groupId>
+      <artifactId>hutool-setting</artifactId>
+      <version>5.8.7</version>
+    </dependency>
+    <dependency>
+      <groupId>cn.hutool</groupId>
+      <artifactId>hutool-http</artifactId>
+      <version>5.8.7</version>
+    </dependency>
+    <dependency>
+      <groupId>com.intellij</groupId>
+      <artifactId>forms_rt</artifactId>
+      <version>7.0.3</version>
+    </dependency>
 
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.11.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.12.0</version>
-        </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-aop</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.kafka</groupId>
+      <artifactId>spring-kafka</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>net.lingala.zip4j</groupId>
-            <artifactId>zip4j</artifactId>
-            <version>2.10.0</version>
-        </dependency>
+    <!--    <dependency>-->
+    <!--      <groupId>org.apache.kafka</groupId>-->
+    <!--      <artifactId>kafka-clients</artifactId>-->
+    <!--      <version>3.2.3</version>-->
+    <!--    </dependency>-->
 
-        <dependency>
-            <groupId>com.carrotsearch</groupId>
-            <artifactId>java-sizeof</artifactId>
-            <version>0.0.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.16</version>
-        </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.kyyee</groupId>-->
-<!--            <artifactId>scst-verify-be</artifactId>-->
-<!--            <version>1.0.0</version>-->
-<!--            <scope>compile</scope>-->
-<!--        </dependency>-->
-        <dependency>
-            <groupId>com.intellij</groupId>
-            <artifactId>forms_rt</artifactId>
-            <version>7.0.3</version>
-        </dependency>
-    </dependencies>
+    <!--    <dependency>-->
+    <!--      <groupId>com.fasterxml.jackson.core</groupId>-->
+    <!--      <artifactId>jackson-databind</artifactId>-->
+    <!--      <version>2.13.4</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>com.fasterxml.jackson.datatype</groupId>-->
+    <!--      <artifactId>jackson-datatype-jsr310</artifactId>-->
+    <!--      <version>2.13.4</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>ch.qos.logback</groupId>-->
+    <!--      <artifactId>logback-classic</artifactId>-->
+    <!--      <version>1.4.1</version>-->
+    <!--    </dependency>-->
+    <!--    <dependency>-->
+    <!--      <groupId>org.junit.jupiter</groupId>-->
+    <!--      <artifactId>junit-jupiter</artifactId>-->
+    <!--      <version>5.9.0</version>-->
+    <!--      <scope>test</scope>-->
+    <!--    </dependency>-->
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.11.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>3.12.0</version>
+    </dependency>
 
-    <build>
-        <finalName>app</finalName>
-        <plugins>
-            <plugin>
-                <!-- https://github.com/lukaszlenart/launch4j-maven-plugin -->
-                <!-- http://launch4j.sourceforge.net/docs.html#Configuration_file -->
-                <groupId>com.akathist.maven.plugins.launch4j</groupId>
-                <artifactId>launch4j-maven-plugin</artifactId>
-                <version>2.1.2</version>
-                <executions>
-                    <execution>
-                        <id>l4j-glui</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>launch4j</goal>
-                        </goals>
-                        <configuration>
-                            <headerType>gui</headerType>
-                            <outfile>ztool/ztool.exe</outfile>
-                            <jar>target/app.jar</jar>
-                            <classPath>
-                                <mainClass>com.kyyee.App</mainClass>
-                                <addDependencies>true</addDependencies>
-                                <preCp>anything</preCp>
-                            </classPath>
-                            <icon>src/main/resources/icons/favicon.ico</icon>
-                            <errTitle>App error</errTitle>
-                            <jre>
-                                <minVersion>8</minVersion>
-                                <maxVersion>11</maxVersion>
-                                <initialHeapSize>128</initialHeapSize>
-                                <maxHeapSize>1024</maxHeapSize>
-                                <!-- jre路径，将生成的exe文件放到和jre同级目录，并把jre文件夹命名为jre -->
-                                <path>./jre</path>
-                            </jre>
-                            <versionInfo>
-                                <fileVersion>1.0.0.0</fileVersion>
-                                <txtFileVersion>1.0.0.0</txtFileVersion>
-                                <fileDescription>Desc</fileDescription>
-                                <copyright>Copyright © 2018-2022 kyyee.Lit</copyright>
-                                <productVersion>1.0.0.0</productVersion>
-                                <txtProductVersion>1.0.0.0</txtProductVersion>
-                                <productName>ZTOOL</productName>
-                                <internalName>ztool</internalName>
-                                <originalFilename>ztool.exe</originalFilename>
-                                <language>SIMPLIFIED_CHINESE</language>
-                            </versionInfo>
-                        </configuration>
-                    </execution>
+    <dependency>
+      <groupId>net.lingala.zip4j</groupId>
+      <artifactId>zip4j</artifactId>
+      <version>2.11.1</version>
+    </dependency>
 
-                    <execution>
-                        <id>l4j-clui</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>launch4j</goal>
-                        </goals>
-                        <configuration>
-                            <headerType>console</headerType>
-                            <outfile>ztool/ztool-cli.exe</outfile>
-                            <jar>target/app.jar</jar>
-                            <classPath>
-                                <mainClass>com.kyyee.App</mainClass>
-                                <addDependencies>true</addDependencies>
-                                <preCp>anything</preCp>
-                            </classPath>
-                            <errTitle>App error</errTitle>
-                            <jre>
-                                <minVersion>8</minVersion>
-                                <maxVersion>11</maxVersion>
-                                <initialHeapSize>128</initialHeapSize>
-                                <maxHeapSize>1024</maxHeapSize>
-                                <!-- jre路径，将生成的exe文件放到和jre同级目录，并把jre文件夹命名为jre -->
-                                <path>./jre</path>
-                            </jre>
-                            <versionInfo>
-                                <fileVersion>1.0.0.0</fileVersion>
-                                <txtFileVersion>1.0.0.0</txtFileVersion>
-                                <fileDescription>Desc</fileDescription>
-                                <copyright>Copyright © 2018-2022 kyyee.Lit</copyright>
-                                <productVersion>1.0.0.0</productVersion>
-                                <txtProductVersion>1.0.0.0</txtProductVersion>
-                                <productName>ZTOOL-CLI</productName>
-                                <internalName>ztool-cli</internalName>
-                                <originalFilename>ztool-cli.exe</originalFilename>
-                                <language>SIMPLIFIED_CHINESE</language>
-                            </versionInfo>
-                        </configuration>
-                    </execution>
+    <dependency>
+      <groupId>com.carrotsearch</groupId>
+      <artifactId>java-sizeof</artifactId>
+      <version>0.0.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.24</version>
+    </dependency>
+  </dependencies>
 
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.3.0</version>
-                <executions>
-                    <execution>
-                        <id>assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <descriptors>
-                                <descriptor>assembly.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+  <build>
+    <plugins>
+      <!-- https://github.com/fvarrui/JavaPackager -->
+      <plugin>
+        <groupId>io.github.fvarrui</groupId>
+        <artifactId>javapackager</artifactId>
+        <version>1.6.7</version>
+        <configuration>
+          <!-- mandatory -->
+          <mainClass>${exec.mainClass}</mainClass>
+          <!-- optional -->
+          <bundleJre>true</bundleJre>
+          <!-- this will bundle a full JRE -->
+          <customizedJre>false</customizedJre>
+          <!-- 这行不能被格式化为多行，否则会出错-->
+          <licenseFile>${project.basedir}/LICENSE</licenseFile>
+          <vmArgs>--add-exports jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED --add-exports jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</vmArgs>
+        </configuration>
+        <executions>
+          <execution>
+            <id>bundling-for-windows</id>
+            <phase>package</phase>
+            <goals>
+              <goal>package</goal>
+            </goals>
+            <configuration>
+              <platform>windows</platform>
+              <createZipball>true</createZipball>
+              <administratorRequired>true</administratorRequired>
+              <winConfig>
+                <generateMsi>false</generateMsi>
+                <generateMsm>false</generateMsm>
+                <headerType>gui</headerType>
+                <companyName>${project.groupId}</companyName>
+                <fileVersion>1.0.0.0</fileVersion>
+                <txtFileVersion>${project.version}</txtFileVersion>
+                <productVersion>1.0.0.0</productVersion>
+                <txtProductVersion>${project.version}</txtProductVersion>
+                <fileDescription>${project.description}</fileDescription>
+                <copyright>Copyright © 2018-2022 kyyee</copyright>
+                <productName>${project.name}</productName>
+                <internalName>${project.name}</internalName>
+                <originalFilename>${project.name}.exe</originalFilename>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>copy-resource</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${basedir}/ztool/jre</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${basedir}/jre</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.3.0</version>
-                <executions>
-                    <execution>
-                        <id>copy-dependencies</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${basedir}/ztool/lib</outputDirectory>
-                            <overWriteReleases>false</overWriteReleases>
-                            <overWriteSnapshots>false</overWriteSnapshots>
-                            <overWriteIfNewer>true</overWriteIfNewer>
-                            <copyPom>false</copyPom>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>3.1.0</version>
-                <goals>
-                    <goal>clean</goal>
-                </goals>
-                <configuration>
-                    <filesets>
-                        <fileset>
-                            <directory>${basedir}/target</directory>
-                            <directory>${basedir}/ztool</directory>
-                        </fileset>
-                    </filesets>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+                <!-- choose EXE creation tool -->
+                <exeCreationTool>launch4j</exeCreationTool>
 
+                <!-- setup generation properties -->
+                <setupMode>askTheUser</setupMode>
+                <setupLanguages>
+                  <english>compiler:Default.isl</english>
+                  <chineseSimplified>compiler:Languages\ChineseSimplified.isl</chineseSimplified>
+                </setupLanguages>
+                <disableDirPage>false</disableDirPage>
+                <disableProgramGroupPage>false</disableProgramGroupPage>
+                <disableFinishedPage>false</disableFinishedPage>
+                <disableRunAfterInstall>false</disableRunAfterInstall>
+                <disableWelcomePage>false</disableWelcomePage>
+                <createDesktopIconTask>true</createDesktopIconTask>
+                <removeOldLibs>true</removeOldLibs>
+              </winConfig>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>bundling-for-linux</id>
+            <phase>package</phase>
+            <goals>
+              <goal>package</goal>
+            </goals>
+            <configuration>
+              <platform>linux</platform>
+              <createTarball>true</createTarball>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>bundling-for-mac</id>
+            <phase>package</phase>
+            <goals>
+              <goal>package</goal>
+            </goals>
+            <configuration>
+              <platform>mac</platform>
+              <createTarball>true</createTarball>
+            </configuration>
+          </execution>
+
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
