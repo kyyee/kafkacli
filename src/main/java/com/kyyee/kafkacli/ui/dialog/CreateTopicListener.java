@@ -2,7 +2,6 @@ package com.kyyee.kafkacli.ui.dialog;
 
 import com.kyyee.framework.common.exception.BaseErrorCode;
 import com.kyyee.framework.common.exception.BaseException;
-import com.kyyee.kafkacli.service.impl.AdminClientServiceImpl;
 import com.kyyee.kafkacli.ui.configs.ClientCache;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

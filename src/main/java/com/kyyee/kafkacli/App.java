@@ -10,12 +10,12 @@ import java.net.Socket;
 public class App {
 
     public static void main(String[] args) {
-       MainFrame.getInstance().init();
-
         try (Socket ignored = new Socket("localhost", SocketServer.getInstance().getPort())) {
             MainFrame.shutdown();
         } catch (Exception ignored) {
         }
+        MainFrame.initTheme();
+        MainFrame.getInstance().init();
 
         SocketServer.getInstance().run();
     }

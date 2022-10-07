@@ -1,12 +1,10 @@
 package com.kyyee.kafkacli.service.impl;
 
 import com.kyyee.kafkacli.service.AdminClientService;
-import org.apache.kafka.clients.admin.*;
-import org.apache.kafka.common.KafkaFuture;
-import org.springframework.kafka.core.KafkaAdmin;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.AdminClientConfig;
+import org.apache.kafka.clients.admin.KafkaAdminClient;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 public class AdminClientServiceImpl implements AdminClientService {

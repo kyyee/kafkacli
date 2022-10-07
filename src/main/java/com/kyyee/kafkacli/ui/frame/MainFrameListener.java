@@ -31,7 +31,7 @@ public class MainFrameListener {
             }
         });
 
-        MainFrame.getInstance().setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
         MainForm.getInstance().getMainPanel().registerKeyboardAction(e -> {
             MainFrame.saveBeforeExit();

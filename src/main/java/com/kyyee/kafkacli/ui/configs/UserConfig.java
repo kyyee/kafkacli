@@ -156,7 +156,7 @@ public class UserConfig {
     }
 
     public boolean isDefaultMaxWindow() {
-        return setting.getBool("defaultMaxWindow", "setting.normal", true);
+        return setting.getBool("defaultMaxWindow", "setting.normal", false);
     }
 
     public void setDefaultMaxWindow(boolean defaultMaxWindow) {
@@ -188,7 +188,7 @@ public class UserConfig {
     }
 
     public String getTheme() {
-        return setting.getStr("theme", "setting.appearance", "Flat Darcula");
+        return setting.getStr("theme", "setting.appearance", "Default");
     }
 
     public void setTheme(String theme) {
@@ -207,7 +207,7 @@ public class UserConfig {
         if (SystemInfo.isLinux) {
             return setting.getStr("fontFamily", "setting.appearance", "Noto Sans CJK HK");
         } else {
-            return setting.getStr("fontFamily", "setting.appearance", "微软雅黑");
+            return setting.getStr("fontFamily", "setting.appearance", "Microsoft YaHei UI");
         }
     }
 
@@ -281,43 +281,4 @@ public class UserConfig {
         setting.putByGroup("userConfigPathBefore", "func.advanced", userConfigPathBefore);
     }
 
-    public String getQuickNoteExportPath() {
-        return setting.getStr("quickNoteExportPath", "func.quickNote", "");
-    }
-
-    public void setQuickNoteExportPath(String quickNoteExportPath) {
-        setting.putByGroup("quickNoteExportPath", "func.quickNote", quickNoteExportPath);
-    }
-
-    public String getHostExportPath() {
-        return setting.getStr("hostExportPath", "func.host", "");
-    }
-
-    public void setHostExportPath(String hostExportPath) {
-        setting.putByGroup("hostExportPath", "func.host", hostExportPath);
-    }
-
-    public String getLastSelectedColor() {
-        return setting.getStr("lastSelectedColor", "func.colorBoard", "007AAE");
-    }
-
-    public void setLastSelectedColor(String lastSelectedColor) {
-        setting.putByGroup("lastSelectedColor", "func.colorBoard", lastSelectedColor);
-    }
-
-    public String getColorTheme() {
-        return setting.getStr("colorTheme", "func.colorBoard", "默认");
-    }
-
-    public void setColorTheme(String colorTheme) {
-        setting.putByGroup("colorTheme", "func.colorBoard", colorTheme);
-    }
-
-    public String getColorCodeType() {
-        return setting.getStr("colorCodeType", "func.colorBoard", "HTML");
-    }
-
-    public void setColorCodeType(String colorCodeType) {
-        setting.putByGroup("colorCodeType", "func.colorBoard", colorCodeType);
-    }
 }

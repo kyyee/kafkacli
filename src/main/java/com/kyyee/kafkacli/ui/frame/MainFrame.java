@@ -20,9 +20,7 @@ import com.kyyee.kafkacli.ui.configs.UserConfig;
 import com.kyyee.kafkacli.ui.dialog.AboutDialog;
 import com.kyyee.kafkacli.ui.dialog.FontSizeGuideDialog;
 import com.kyyee.kafkacli.ui.dialog.SettingDialog;
-import com.kyyee.kafkacli.ui.form.LoadingForm;
-import com.kyyee.kafkacli.ui.form.MainForm;
-import com.kyyee.kafkacli.ui.form.TopicForm;
+import com.kyyee.kafkacli.ui.form.*;
 import com.kyyee.kafkacli.ui.utils.ComponentUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +30,6 @@ import javax.swing.plaf.FontUIResource;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +54,6 @@ public class MainFrame extends JFrame {
 
     public void init() {
         preInit4Mac();
-        initTheme();
         setName(UiConsts.APP_NAME);
         setTitle(UiConsts.APP_NAME);
 
@@ -182,7 +178,6 @@ public class MainFrame extends JFrame {
         FlatLaf.registerCustomDefaultsSource("themes");
         try {
             switch (UserConfig.getInstance().getTheme()) {
-                case "Default" -> UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 case "Flat Light" -> {
                     setAccentColor();
                     FlatLightLaf.setup();
@@ -194,6 +189,10 @@ public class MainFrame extends JFrame {
                 case "Flat Dark" -> {
                     setAccentColor();
                     FlatDarkLaf.setup();
+                }
+                case "Flat Darcula" -> {
+                    setAccentColor();
+                    FlatDarculaLaf.setup();
                 }
                 case "Dark purple" -> FlatDarkPurpleIJTheme.setup();
                 case "IntelliJ Cyan" -> FlatCyanLightIJTheme.setup();
@@ -209,10 +208,7 @@ public class MainFrame extends JFrame {
                 case "GitHub Dark" -> FlatGitHubDarkIJTheme.setup();
                 case "Xcode-Dark" -> FlatXcodeDarkIJTheme.setup();
                 case "Vuesion" -> FlatVuesionIJTheme.setup();
-                default -> {
-                    setAccentColor();
-                    FlatDarculaLaf.setup();
-                }
+                default -> UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             }
 
             if (FlatLaf.isLafDark()) {
@@ -329,6 +325,9 @@ public class MainFrame extends JFrame {
      * 初始化所有tab
      */
     public static void initAllTab() {
+        ThreadUtil.execute(() -> BrokerForm.getInstance().init());
+        ThreadUtil.execute(() -> ConsumerGroupForm.getInstance().init());
+        ThreadUtil.execute(() -> MainForm.getInstance().init());
         ThreadUtil.execute(() -> TopicForm.getInstance().init());
 
         // 检查新版版

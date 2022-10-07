@@ -1,8 +1,11 @@
 package com.kyyee.kafkacli.ui.dialog;
 
 import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.thread.ThreadUtil;
+import com.formdev.flatlaf.util.SystemInfo;
 import com.kyyee.framework.common.exception.BaseErrorCode;
 import com.kyyee.framework.common.exception.BaseException;
+import com.kyyee.kafkacli.ui.UiConsts;
 import com.kyyee.kafkacli.ui.configs.UserConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +16,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 @Slf4j
 public class SettingListener {
@@ -52,6 +58,18 @@ public class SettingListener {
                 JOptionPane.showMessageDialog(dialog.getContentPane(), "保存成功！\n\n需要重启MooTool生效", "成功", JOptionPane.INFORMATION_MESSAGE);
                 JOptionPane.showMessageDialog(dialog.getContentPane(), "KafkaCli即将关闭！\n\n关闭后需要手动再次打开", "KafkaCli即将关闭", JOptionPane.INFORMATION_MESSAGE);
                 UserConfig.getInstance().flush();
+
+                if (SystemInfo.isWindows) {
+                    ThreadUtil.execute(() -> {
+                        try {
+                            String pathname = System.getProperty("java.class.path");
+                            log.info("kafka.exe path is:{}", pathname);
+                            Desktop.getDesktop().open(new File(pathname));
+                        } catch (IOException exception) {
+                            log.error("restart kafka.exe failed. {}", exception.getMessage());
+                        }
+                    });
+                }
                 System.exit(0);
 
             } catch (Exception exception) {
