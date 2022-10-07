@@ -6,14 +6,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * <pre>
- * 版本概要
- * </pre>
- *
- * @author <a href="https://github.com/rememberber">RememBerBer</a>
- * @since 2019/4/20.
- */
+
 @Data
 public class VersionInfo implements Serializable {
 
@@ -31,14 +24,6 @@ public class VersionInfo implements Serializable {
     @JsonProperty("versions")
     private List<Version> versions;
 
-    /**
-     * <pre>
-     * 版本类
-     * </pre>
-     *
-     * @author <a href="https://github.com/rememberber">RememBerBer</a>
-     * @since 2019/4/20.
-     */
     @Data
     public static class Version implements Serializable {
 
