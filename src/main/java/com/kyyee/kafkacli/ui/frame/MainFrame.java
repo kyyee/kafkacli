@@ -48,7 +48,6 @@ public class MainFrame extends JFrame {
 
     private SystemTray systemTray;
 
-
     public static MainFrame getInstance() {
         if (mainFrame == null) {
             mainFrame = new MainFrame();
@@ -57,6 +56,8 @@ public class MainFrame extends JFrame {
     }
 
     public void init() {
+        preInit4Mac();
+        initTheme();
         setName(UiConsts.APP_NAME);
         setTitle(UiConsts.APP_NAME);
 
@@ -75,18 +76,13 @@ public class MainFrame extends JFrame {
 
         MainFrameListener.addListeners(this);
 
-        preInit4Mac();
-        initTheme();
-        // install inspectors
-        FlatInspector.install("ctrl shift alt X");
-        FlatUIDefaultsInspector.install("ctrl shift alt Y");
-        if (UserConfig.getInstance().isTray()) {
-            initTray();
-        }
         JPanel loadingPanel = LoadingForm.getInstance().getLoadingPanel();
         add(loadingPanel);
         pack();
         setVisible(true);
+        // install inspectors
+        FlatInspector.install("ctrl shift alt X");
+        FlatUIDefaultsInspector.install("ctrl shift alt Y");
 
         Upgrade.smoothUpgrade();
         initGlobalFont();
@@ -96,10 +92,11 @@ public class MainFrame extends JFrame {
             MainForm.getInstance().getMainTabbedPane().setSelectedIndex(UserConfig.getInstance().getRecentTabIndex());
         }
         MainForm.getInstance().init();
+        initTray();
         initAllTab();
         initOthers();
 
-       getInstance().remove(loadingPanel);
+        remove(loadingPanel);
         FontSizeGuideDialog.init();
     }
 
@@ -113,22 +110,20 @@ public class MainFrame extends JFrame {
             FlatDesktop.setAboutHandler(() -> {
                 try {
                     AboutDialog dialog = new AboutDialog();
-
                     dialog.pack();
                     dialog.setVisible(true);
                 } catch (Exception exception) {
-                    log.error("init AboutDialog failed. {}", exception.getMessage());
+                    log.error("init AboutDialog for Mac failed. {}", exception.getMessage());
                     throw BaseException.of(BaseErrorCode.SYS_INIT_ERROR);
                 }
             });
             FlatDesktop.setPreferencesHandler(() -> {
                 try {
                     SettingDialog dialog = new SettingDialog();
-
                     dialog.pack();
                     dialog.setVisible(true);
                 } catch (Exception exception) {
-                    log.error("init SettingDialog failed. {}", exception.getMessage());
+                    log.error("init SettingDialog for Mac failed. {}", exception.getMessage());
                     throw BaseException.of(BaseErrorCode.SYS_INIT_ERROR);
                 }
             });
@@ -141,7 +136,7 @@ public class MainFrame extends JFrame {
      */
     private void initTray() {
         try {
-            if (SystemTray.isSupported() && systemTray == null) {
+            if (UserConfig.getInstance().isTray() && SystemTray.isSupported() && systemTray == null) {
                 systemTray = SystemTray.getSystemTray();
 
                 PopupMenu popupMenu;
@@ -221,21 +216,20 @@ public class MainFrame extends JFrame {
             }
 
             if (FlatLaf.isLafDark()) {
-//                FlatSVGIcon.ColorFilter.getInstance().setMapper(color -> color.brighter().brighter());
+                FlatSVGIcon.ColorFilter.getInstance().setMapper(Color::brighter);
             } else {
-                FlatSVGIcon.ColorFilter.getInstance().setMapper(color -> color.darker().darker());
+                FlatSVGIcon.ColorFilter.getInstance().setMapper(Color::darker);
 //                SwingUtilities.windowForComponent(MainFrame.getInstance()).repaint();
             }
 
-            if (UserConfig.getInstance().isUnifiedBackground()) {
-                UIManager.put("TitlePane.unifiedBackground", true);
-            }
+            UIManager.put("TitlePane.unifiedBackground", UserConfig.getInstance().isUnifiedBackground());
 
         } catch (Exception exception) {
             log.error("init theme failed. {}", exception.getMessage());
             throw BaseException.of(BaseErrorCode.SYS_INIT_ERROR);
         }
     }
+
     private static void setAccentColor() {
         FlatLaf.setGlobalExtraDefaults(Map.of("@accentColor", "$" + UserConfig.getInstance().getAccentColor()));
     }
