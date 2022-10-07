@@ -12,7 +12,7 @@
 
   <groupId>com.kyyee.kafkacli</groupId>
   <artifactId>kafkacli</artifactId>
-  <version>1.0.0</version>
+  <version>v1.0.0-alpha</version>
   <name>${project.artifactId}</name>
   <url>https://github.com/kyyee/kafkacli</url>
   <description>kafka desktop client for developers</description>
