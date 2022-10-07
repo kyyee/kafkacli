@@ -188,7 +188,7 @@ public class UserConfig {
     }
 
     public String getTheme() {
-        return setting.getStr("theme", "setting.appearance", "Default");
+        return setting.getStr("theme", "setting.appearance", "Flat IntelliJ");
     }
 
     public void setTheme(String theme) {
