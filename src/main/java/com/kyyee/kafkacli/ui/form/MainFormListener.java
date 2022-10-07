@@ -342,53 +342,53 @@ public class MainFormListener {
     }
 
     private static void offset(String consumerGroupId, ConsumerGroupForm consumerGroupForm, AdminClient adminClient, KafkaConsumer<String, String> kafkaConsumer) {
-        Map<TopicPartition, OffsetAndMetadata> topicPartitionOffsets;
+        String[] headers = {"index", "topic", "partition", "start", "end", "offset", "lag", "last commit timestamp"};
+        DefaultTableModel model = new DefaultTableModel(null, headers);
+        JTable offsetTable = consumerGroupForm.getOffsetTable();
+        offsetTable.setModel(model);
+        Object[] data = new Object[8];
         try {
-            topicPartitionOffsets = adminClient.listConsumerGroupOffsets(consumerGroupId).partitionsToOffsetAndMetadata().get(5, TimeUnit.SECONDS);
-        } catch (InterruptedException | ExecutionException | TimeoutException ex) {
-            throw new RuntimeException(ex);
-        }
-        int i = 0;
-        for (Map.Entry<TopicPartition, OffsetAndMetadata> topicPartitionOffsetAndMetadataEntry : topicPartitionOffsets.entrySet()) {
-            String topic = topicPartitionOffsetAndMetadataEntry.getKey().topic();
-            int partition = topicPartitionOffsetAndMetadataEntry.getKey().partition();
-            long offset = topicPartitionOffsetAndMetadataEntry.getValue().offset();
-            Integer leaderEpoch = topicPartitionOffsetAndMetadataEntry.getValue().leaderEpoch().orElse(null);
+            Map<TopicPartition, OffsetAndMetadata> topicPartitionOffsets = adminClient.listConsumerGroupOffsets(consumerGroupId).partitionsToOffsetAndMetadata().get(5, TimeUnit.SECONDS);
+            int i = 0;
+            for (Map.Entry<TopicPartition, OffsetAndMetadata> topicPartitionOffsetAndMetadataEntry : topicPartitionOffsets.entrySet()) {
+                String topic = topicPartitionOffsetAndMetadataEntry.getKey().topic();
+                int partition = topicPartitionOffsetAndMetadataEntry.getKey().partition();
+                long offset = topicPartitionOffsetAndMetadataEntry.getValue().offset();
+                Integer leaderEpoch = topicPartitionOffsetAndMetadataEntry.getValue().leaderEpoch().orElse(null);
 
-            String[] headers = {"index", "topic", "partition", "start", "end", "offset", "lag", "last commit timestamp"};
-            DefaultTableModel model = new DefaultTableModel(null, headers);
-            JTable offsetTable = consumerGroupForm.getOffsetTable();
+                data[0] = i;
+                data[1] = topic;
+                data[2] = partition;
+                Long start = kafkaConsumer.beginningOffsets(List.of(topicPartitionOffsetAndMetadataEntry.getKey())).values().stream().findFirst().orElseThrow();
+                Long end = kafkaConsumer.endOffsets(List.of(topicPartitionOffsetAndMetadataEntry.getKey())).values().stream().findFirst().orElseThrow();
+                Long lag;
+                try {
+                    lag = kafkaConsumer.currentLag(topicPartitionOffsetAndMetadataEntry.getKey()).isPresent() ? kafkaConsumer.currentLag(topicPartitionOffsetAndMetadataEntry.getKey()).getAsLong() : null;
+                } catch (IllegalStateException ex) {
+                    lag = null;
+                }
+                if (ObjectUtils.isEmpty(lag)) {
+                    lag = end - offset;
+                }
+                Long position;
+                try {
+                    position = kafkaConsumer.position(topicPartitionOffsetAndMetadataEntry.getKey());
+                } catch (Exception ex) {
+                    position = null;
+                }
+                kafkaConsumer.committed(Set.of(topicPartitionOffsetAndMetadataEntry.getKey()));
 
-            offsetTable.setModel(model);
-
-            Object[] data = new Object[8];
-            data[0] = i;
-            data[1] = topic;
-            data[2] = partition;
-            Long start = kafkaConsumer.beginningOffsets(List.of(topicPartitionOffsetAndMetadataEntry.getKey())).values().stream().findFirst().orElseThrow();
-            Long end = kafkaConsumer.endOffsets(List.of(topicPartitionOffsetAndMetadataEntry.getKey())).values().stream().findFirst().orElseThrow();
-            Long lag;
-            try {
-                lag = kafkaConsumer.currentLag(topicPartitionOffsetAndMetadataEntry.getKey()).isPresent() ? kafkaConsumer.currentLag(topicPartitionOffsetAndMetadataEntry.getKey()).getAsLong() : null;
-            } catch (IllegalStateException ex) {
-                lag = null;
+                data[3] = start;
+                data[4] = end;
+                data[5] = offset;
+                data[6] = lag;
+                data[7] = position;
+                model.addRow(data);
+                i++;
             }
-            Long position;
-            try {
-                position = kafkaConsumer.position(topicPartitionOffsetAndMetadataEntry.getKey());
-            } catch (Exception ex) {
-                position = null;
-            }
-            kafkaConsumer.committed(Set.of(topicPartitionOffsetAndMetadataEntry.getKey()));
-
-            data[3] = start;
-            data[4] = end;
-            data[5] = offset;
-            data[6] = lag;
-            data[7] = position;
-            model.addRow(data);
-            i++;
+        } catch (InterruptedException | ExecutionException | TimeoutException ignored) {
         }
+
     }
 
     private static void config(String topicName, TopicForm topicForm, AdminClient adminClient) {
