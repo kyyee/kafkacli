@@ -1,5 +1,7 @@
 package com.kyyee.kafkacli.ui.form;
 
+import cn.hutool.core.lang.Snowflake;
+import cn.hutool.core.thread.ThreadUtil;
 import com.intellij.uiDesigner.core.GridConstraints;
 import com.kyyee.framework.common.exception.BaseErrorCode;
 import com.kyyee.framework.common.exception.BaseException;
@@ -21,20 +23,20 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
-import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 @Slf4j
 public class MainFormListener {
-    static GridConstraints gridConstraints = new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, new Dimension(200, 200), null, 0, false);
+    public static final String GROUP_ID = new Snowflake().nextIdStr();
+    static GridConstraints gridConstraints = new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false);
 
     public static void addListener(MainForm mainForm) {
         JPopupMenu clusterTreePopupMenu;
@@ -123,8 +125,6 @@ public class MainFormListener {
 
         clusterTree.addTreeSelectionListener(e -> {
             DefaultMutableTreeNode selectionNode = (DefaultMutableTreeNode) clusterTree.getLastSelectedPathComponent();
-//            if (selectionNode.isLeaf()) {
-            // 叶子节点
             if (ObjectUtils.isEmpty(selectionNode)) {
                 return;
             }
@@ -141,12 +141,17 @@ public class MainFormListener {
                         Collection<Node> nodes = adminClient.describeCluster().nodes().get(5, TimeUnit.SECONDS);
                         Optional<Node> nodeOptional = nodes.stream().filter(node -> node.idString().equals(nodeId)).findFirst();
                         nodeOptional.ifPresent(node -> {
+                            mainForm.getMainPanel().updateUI();
                             BrokerForm brokerForm = BrokerForm.getInstance();
-                            brokerForm.getIdTextField().setText(node.idString());
-                            brokerForm.getHostTextField().setText(node.host());
-                            brokerForm.getPortTextField().setText(String.valueOf(node.port()));
-                            brokerForm.getRackTextField().setText(node.rack());
-                            MainForm.getInstance().getDataPanel().add(brokerForm.getContentPanel(), gridConstraints);
+                            mainForm.getDataPanel().removeAll();
+                            mainForm.getDataPanel().add(brokerForm.getContentPanel(), gridConstraints);
+                            mainForm.getMainPanel().updateUI();
+                            ThreadUtil.execute(() -> {
+                                brokerForm.getIdTextField().setText(node.idString());
+                                brokerForm.getHostTextField().setText(node.host());
+                                brokerForm.getPortTextField().setText(String.valueOf(node.port()));
+                                brokerForm.getRackTextField().setText(node.rack());
+                            });
                         });
                     } catch (InterruptedException | ExecutionException | TimeoutException ex) {
                         throw new RuntimeException(ex);
@@ -160,23 +165,28 @@ public class MainFormListener {
                         Collection<TopicListing> topics = adminClient.listTopics().listings().get(5, TimeUnit.SECONDS);
                         Optional<TopicListing> topicOptional = topics.stream().filter(topic -> topic.name().equals(topicName)).findFirst();
                         topicOptional.ifPresent(topic -> {
+                            mainForm.getMainPanel().updateUI();
                             TopicForm topicForm = TopicForm.getInstance();
-                            topicForm.getTopicNameTextField().setText(topic.name());
-                            try (KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(Map.of(
-                                ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, cluster,
-                                ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class,
-                                ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class,
-                                ConsumerConfig.GROUP_ID_CONFIG, "kafkacli",
-                                ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest"
-                            ))) {
-                                record(topicName, topicForm, kafkaConsumer);
-                                partition(topicName, topicForm, kafkaConsumer);
-                            }
-                            config(topicName, topicForm, adminClient);
+                            mainForm.getDataPanel().removeAll();
+                            mainForm.getDataPanel().add(topicForm.getContentPanel(), gridConstraints);
+                            mainForm.getMainPanel().updateUI();
 
+                            ThreadUtil.execute(() -> {
+                                topicForm.getTopicNameTextField().setText(topic.name());
+                                try (KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(Map.of(
+                                    ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, cluster,
+                                    ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class,
+                                    ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class,
+                                    ConsumerConfig.GROUP_ID_CONFIG, "kafkacli" + GROUP_ID,
+                                    ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest"
+                                )) {
+                                }) {
+                                    record(topicName, topicForm, kafkaConsumer);
+                                    partition(topicName, topicForm, kafkaConsumer);
+                                }
+                                config(topicName, topicForm, adminClient);
+                            });
 
-                            MainForm.getInstance().getDataPanel().add(topicForm.getContentPanel(), gridConstraints);
-                            MainForm.getInstance().getDataPanel().updateUI();
                         });
                     } catch (InterruptedException | ExecutionException | TimeoutException ex) {
                         throw new RuntimeException(ex);
@@ -190,71 +200,28 @@ public class MainFormListener {
                     try {
                         Map<String, ConsumerGroupDescription> consumerGroups = adminClient.describeConsumerGroups(List.of(consumerGroupId)).all().get(5, TimeUnit.SECONDS);
                         Optional<ConsumerGroupDescription> consumerGroupDescriptionOptional = consumerGroups.values().stream().filter(consumerGroupDescription -> consumerGroupDescription.groupId().equals(consumerGroupId)).findFirst();
-                        consumerGroupDescriptionOptional.ifPresent(consumerGroupDescription->{
+                        consumerGroupDescriptionOptional.ifPresent(consumerGroupDescription -> {
+                            mainForm.getMainPanel().updateUI();
                             ConsumerGroupForm consumerGroupForm = ConsumerGroupForm.getInstance();
-                            consumerGroupForm.getIdTextField().setText(consumerGroupDescription.groupId());
-                            consumerGroupForm.getStateTextField().setText(consumerGroupDescription.state().toString());
-                            consumerGroupForm.getCoordinatorTextField().setText(consumerGroupDescription.coordinator().toString());
-                            consumerGroupForm.getPartitionAssignorTextField().setText(consumerGroupDescription.partitionAssignor());
-                            consumerGroupForm.getSimpleConsumerGroupTextField().setText(String.valueOf(consumerGroupDescription.isSimpleConsumerGroup()));
-                            Map<TopicPartition, OffsetAndMetadata> topicPartitionOffsets = null;
-                            try {
-                                topicPartitionOffsets = adminClient.listConsumerGroupOffsets(consumerGroupId).partitionsToOffsetAndMetadata().get(5, TimeUnit.SECONDS);
-                            } catch (InterruptedException | ExecutionException | TimeoutException ex) {
-                                throw new RuntimeException(ex);
-                            }
-                            int i = 0;
-                            for (Map.Entry<TopicPartition, OffsetAndMetadata> topicPartitionOffsetAndMetadataEntry : topicPartitionOffsets.entrySet()) {
-                                String topic = topicPartitionOffsetAndMetadataEntry.getKey().topic();
-                                int partition = topicPartitionOffsetAndMetadataEntry.getKey().partition();
-                                long offset = topicPartitionOffsetAndMetadataEntry.getValue().offset();
-                                Integer leaderEpoch = topicPartitionOffsetAndMetadataEntry.getValue().leaderEpoch().orElse(null);
-
-                                String[] headers = {"index", "topic", "partition", "start", "end", "offset", "lag", "last commit timestamp"};
-                                DefaultTableModel model = new DefaultTableModel(null, headers);
-                                JTable offsetTable = consumerGroupForm.getOffsetTable();
-
-                                offsetTable.setModel(model);
-
-                                Object[] data = new Object[8];
-                                data[0]=i;
-                                data[1] = topic;
-                                data[2] = partition;
+                            mainForm.getDataPanel().removeAll();
+                            mainForm.getDataPanel().add(consumerGroupForm.getContentPanel(), gridConstraints);
+                            mainForm.getMainPanel().updateUI();
+                            ThreadUtil.execute(() -> {
+                                consumerGroupForm.getIdTextField().setText(consumerGroupDescription.groupId());
+                                consumerGroupForm.getStateTextField().setText(consumerGroupDescription.state().toString());
+                                consumerGroupForm.getCoordinatorTextField().setText(consumerGroupDescription.coordinator().toString());
+                                consumerGroupForm.getPartitionAssignorTextField().setText(consumerGroupDescription.partitionAssignor());
+                                consumerGroupForm.getSimpleConsumerGroupTextField().setText(String.valueOf(consumerGroupDescription.isSimpleConsumerGroup()));
                                 try (KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(Map.of(
                                     ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, cluster,
                                     ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class,
                                     ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class,
-                                    ConsumerConfig.GROUP_ID_CONFIG, "kafkacli",
+                                    ConsumerConfig.GROUP_ID_CONFIG, "kafkacli" + GROUP_ID,
                                     ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest"
                                 ))) {
-                                    Long start = kafkaConsumer.beginningOffsets(List.of(topicPartitionOffsetAndMetadataEntry.getKey())).values().stream().findFirst().orElseThrow();
-                                    Long end = kafkaConsumer.endOffsets(List.of(topicPartitionOffsetAndMetadataEntry.getKey())).values().stream().findFirst().orElseThrow();
-                                    Long lag;
-                                    try {
-                                        lag = kafkaConsumer.currentLag(topicPartitionOffsetAndMetadataEntry.getKey()).isPresent() ? kafkaConsumer.currentLag(topicPartitionOffsetAndMetadataEntry.getKey()).getAsLong() : null;
-                                    } catch (IllegalStateException ex) {
-                                        lag = null;
-                                    }
-                                    Long position;
-                                    try {
-                                        position = kafkaConsumer.position(topicPartitionOffsetAndMetadataEntry.getKey());
-                                    } catch (Exception ex) {
-                                        position = null;
-                                    }
-                                    kafkaConsumer.committed(Set.of(topicPartitionOffsetAndMetadataEntry.getKey()));
-
-                                    data[3] = start;
-                                    data[4] = end;
-                                    data[5] = offset;
-                                    data[6] = lag;
-                                    data[7] = position;
+                                    offset(consumerGroupId, consumerGroupForm, adminClient, kafkaConsumer);
                                 }
-                                model.addRow(data);
-                                i++;
-                            }
-
-                            MainForm.getInstance().getDataPanel().add(consumerGroupForm.getContentPanel(), gridConstraints);
-                            MainForm.getInstance().getDataPanel().updateUI();
+                            });
                         });
                     } catch (InterruptedException | ExecutionException | TimeoutException ex) {
                         throw new RuntimeException(ex);
@@ -263,7 +230,6 @@ public class MainFormListener {
                 }
                 default -> throw new IllegalStateException("Unexpected value: " + parent.toString());
             }
-//            }
         });
 
         clusterTreeAddNewConnMenuItem.addActionListener(e -> {
@@ -283,11 +249,11 @@ public class MainFormListener {
             selectionNode.removeFromParent();
 //            DefaultTreeModel rootTreeModel = (DefaultTreeModel) clusterTree.getModel();
 //            rootTreeModel.removeNodeFromParent(selectionNode);
-            try  {
+            try {
                 NewConnListener.buildBrokers(adminClient, parent);
             } catch (Exception exception) {
                 log.info("connect kafka failed. {}", exception.getMessage());
-                JOptionPane.showMessageDialog(mainForm.getContentPanel(), "连接失败！请检查配置\n\n", "失败", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(mainForm.getMainPanel(), "连接失败！请检查配置\n\n", "失败", JOptionPane.ERROR_MESSAGE);
                 throw BaseException.of(BaseErrorCode.CONNECTION_FAILED);
             }
             clusterTree.updateUI();
@@ -300,16 +266,16 @@ public class MainFormListener {
             selectionNode.removeFromParent();
 //            DefaultTreeModel rootTreeModel = (DefaultTreeModel) clusterTree.getModel();
 //            rootTreeModel.removeNodeFromParent(selectionNode);
-            try  {
+            try {
                 NewConnListener.buildTopics(adminClient, parent);
             } catch (Exception exception) {
                 log.info("connect kafka failed. {}", exception.getMessage());
-                JOptionPane.showMessageDialog(mainForm.getContentPanel(), "连接失败！请检查配置\n\n", "失败", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(mainForm.getMainPanel(), "连接失败！请检查配置\n\n", "失败", JOptionPane.ERROR_MESSAGE);
                 throw BaseException.of(BaseErrorCode.CONNECTION_FAILED);
             }
             clusterTree.updateUI();
         });
-        topicsCreateMenuItem.addActionListener(e->{
+        topicsCreateMenuItem.addActionListener(e -> {
             DefaultMutableTreeNode selectionNode = (DefaultMutableTreeNode) clusterTree.getLastSelectedPathComponent();
             try {
                 String cluster = selectionNode.getParent().toString();
@@ -324,7 +290,7 @@ public class MainFormListener {
         topicDeleteMenuItem.addActionListener(e -> {
             DefaultMutableTreeNode selectionNode = (DefaultMutableTreeNode) clusterTree.getLastSelectedPathComponent();
             try {
-                int response = JOptionPane.showConfirmDialog(mainForm.getContentPanel(), "即将删除topic，所有数据将丢失！请确认\n\n", "警告", JOptionPane.OK_CANCEL_OPTION);
+                int response = JOptionPane.showConfirmDialog(mainForm.getMainPanel(), "即将删除topic，所有数据将丢失！请确认\n\n", "警告", JOptionPane.OK_CANCEL_OPTION);
                 if (response == 0) {
                     log.info("按下确定按钮!");
                     String cluster = selectionNode.getParent().toString();
@@ -347,11 +313,11 @@ public class MainFormListener {
 //            DefaultTreeModel rootTreeModel = (DefaultTreeModel) clusterTree.getModel();
 //            rootTreeModel.removeNodeFromParent(selectionNode);
 
-            try  {
+            try {
                 NewConnListener.buildConsumerGroups(adminClient, parent);
             } catch (Exception exception) {
                 log.info("connect kafka failed. {}", exception.getMessage());
-                JOptionPane.showMessageDialog(mainForm.getContentPanel(), "连接失败！请检查配置\n\n", "失败", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(mainForm.getMainPanel(), "连接失败！请检查配置\n\n", "失败", JOptionPane.ERROR_MESSAGE);
                 throw BaseException.of(BaseErrorCode.CONNECTION_FAILED);
             }
             clusterTree.updateUI();
@@ -359,7 +325,7 @@ public class MainFormListener {
         consumerGroupDeleteMenuItem.addActionListener(e -> {
             DefaultMutableTreeNode selectionNode = (DefaultMutableTreeNode) clusterTree.getLastSelectedPathComponent();
             try {
-                int response = JOptionPane.showConfirmDialog(mainForm.getContentPanel(), "即将删除consumerGroup，所有数据将丢失！请确认\n\n", "警告", JOptionPane.OK_CANCEL_OPTION);
+                int response = JOptionPane.showConfirmDialog(mainForm.getMainPanel(), "即将删除consumerGroup，所有数据将丢失！请确认\n\n", "警告", JOptionPane.OK_CANCEL_OPTION);
                 if (response == 0) {
                     log.info("按下确定按钮!");
                     String cluster = selectionNode.getParent().toString();
@@ -373,6 +339,56 @@ public class MainFormListener {
             }
         });
 
+    }
+
+    private static void offset(String consumerGroupId, ConsumerGroupForm consumerGroupForm, AdminClient adminClient, KafkaConsumer<String, String> kafkaConsumer) {
+        Map<TopicPartition, OffsetAndMetadata> topicPartitionOffsets;
+        try {
+            topicPartitionOffsets = adminClient.listConsumerGroupOffsets(consumerGroupId).partitionsToOffsetAndMetadata().get(5, TimeUnit.SECONDS);
+        } catch (InterruptedException | ExecutionException | TimeoutException ex) {
+            throw new RuntimeException(ex);
+        }
+        int i = 0;
+        for (Map.Entry<TopicPartition, OffsetAndMetadata> topicPartitionOffsetAndMetadataEntry : topicPartitionOffsets.entrySet()) {
+            String topic = topicPartitionOffsetAndMetadataEntry.getKey().topic();
+            int partition = topicPartitionOffsetAndMetadataEntry.getKey().partition();
+            long offset = topicPartitionOffsetAndMetadataEntry.getValue().offset();
+            Integer leaderEpoch = topicPartitionOffsetAndMetadataEntry.getValue().leaderEpoch().orElse(null);
+
+            String[] headers = {"index", "topic", "partition", "start", "end", "offset", "lag", "last commit timestamp"};
+            DefaultTableModel model = new DefaultTableModel(null, headers);
+            JTable offsetTable = consumerGroupForm.getOffsetTable();
+
+            offsetTable.setModel(model);
+
+            Object[] data = new Object[8];
+            data[0] = i;
+            data[1] = topic;
+            data[2] = partition;
+            Long start = kafkaConsumer.beginningOffsets(List.of(topicPartitionOffsetAndMetadataEntry.getKey())).values().stream().findFirst().orElseThrow();
+            Long end = kafkaConsumer.endOffsets(List.of(topicPartitionOffsetAndMetadataEntry.getKey())).values().stream().findFirst().orElseThrow();
+            Long lag;
+            try {
+                lag = kafkaConsumer.currentLag(topicPartitionOffsetAndMetadataEntry.getKey()).isPresent() ? kafkaConsumer.currentLag(topicPartitionOffsetAndMetadataEntry.getKey()).getAsLong() : null;
+            } catch (IllegalStateException ex) {
+                lag = null;
+            }
+            Long position;
+            try {
+                position = kafkaConsumer.position(topicPartitionOffsetAndMetadataEntry.getKey());
+            } catch (Exception ex) {
+                position = null;
+            }
+            kafkaConsumer.committed(Set.of(topicPartitionOffsetAndMetadataEntry.getKey()));
+
+            data[3] = start;
+            data[4] = end;
+            data[5] = offset;
+            data[6] = lag;
+            data[7] = position;
+            model.addRow(data);
+            i++;
+        }
     }
 
     private static void config(String topicName, TopicForm topicForm, AdminClient adminClient) {

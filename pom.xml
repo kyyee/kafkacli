@@ -180,8 +180,6 @@
                 <setupLanguages>
                   <english>compiler:Default.isl</english>
                   <chineseSimplified>compiler:Languages\ChineseSimplified.isl</chineseSimplified>
-                  <spanish>compiler:Languages\Spanish.isl</spanish>
-                  <german>compiler:Languages\German.isl</german>
                 </setupLanguages>
                 <disableDirPage>false</disableDirPage>
                 <disableProgramGroupPage>false</disableProgramGroupPage>

@@ -28,7 +28,6 @@ public class VersionInfo implements Serializable {
     /**
      * 历史版本列表
      */
-    // todo 修改name
     @JsonProperty("versions")
     private List<Version> versions;
 
