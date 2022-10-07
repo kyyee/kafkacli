@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: com.kyyee.App
+Main-Class: com.kyyee.kafkacli.App
 
