@@ -82,11 +82,11 @@ public class UiConsts {
     /**
      * 软件版本检查url
      */
-    public static final String CHECK_VERSION_URL = "https://github.com/kyyee/kafkacli/kafkacli-ui/src/main/resources/version.json";
+    public static final String CHECK_VERSION_URL = "https://raw.githubusercontent.com/kyyee/kafkacli/main/src/main/resources/version.json";
 
     /**
      * 软件下载链接信息url
      */
-    public static final String DOWNLOAD_LINK_INFO_URL = "https://github.com/kyyee/kafkacli/download_urls.json";
+    public static final String DOWNLOAD_LINK_INFO_URL = "https://raw.githubusercontent.com/kyyee/kafkacli/main/download_urls.json";
 
 }

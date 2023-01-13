@@ -207,6 +207,10 @@ public class MainFormListener {
                             mainForm.getDataPanel().add(consumerGroupForm.getContentPanel(), gridConstraints);
                             mainForm.getMainPanel().updateUI();
                             ThreadUtil.execute(() -> {
+                                Collection<MemberDescription> members = consumerGroupDescription.members();
+                                for (MemberDescription member : members) {
+                                    log.info("-----------{}", member.toString());
+                                }
                                 consumerGroupForm.getIdTextField().setText(consumerGroupDescription.groupId());
                                 consumerGroupForm.getStateTextField().setText(consumerGroupDescription.state().toString());
                                 consumerGroupForm.getCoordinatorTextField().setText(consumerGroupDescription.coordinator().toString());
