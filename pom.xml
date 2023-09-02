@@ -134,7 +134,7 @@
       <plugin>
         <groupId>io.github.fvarrui</groupId>
         <artifactId>javapackager</artifactId>
-        <version>1.6.7</version>
+        <version>1.7.0</version>
         <configuration>
           <!-- mandatory -->
           <mainClass>${exec.mainClass}</mainClass>
